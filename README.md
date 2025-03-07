@@ -55,50 +55,15 @@ The data model has the following main relationships:
 - Dim_Campaign is connected to Dim_Product via Product EAN/PLU
 - Fact_Finance is connected to Dim_Date via Date
 
-### Key Measures
+### Measures
 
-The data model includes several important measures organized by category:
+For detailed documentation of all measures used in this project, please refer to the [Measure Documentation](./Measure_Documentation.md) file. This documentation provides comprehensive explanations of all measures organized by category:
 
-#### Sales Measures
-- **Sales**: Sum of all sales values
-- **Margin kr**: Sum of all sales margins in Swedish kronor
-- **Margin %**: Calculated as total margin divided by total sales value
-- **Product Price**: Calculated as sales minus margin
-- **MTD Sales**: Month-to-date sales calculation
-- **QTD Sales**: Quarter-to-date sales calculation
-- **WTD Sales**: Week-to-date sales calculation
-- **YTD Sales**: Year-to-date sales calculation
-
-#### Campaign Measures
-- **Campaign Discount kr**: Calculates the total discount amount from campaigns
-- **Total Price incl Campaign**: Sales value after campaign discounts
-- **TB1 (Total Margin After Campaign Weeks)**: Margin after deducting campaign discounts
-- **TG1 (%)**: TB1 as a percentage of total price including campaign
-- **Result %**: Final result as a percentage of total price including campaign
-- **Max TB1 Campaign Week**: Identifies the campaign week with the highest TB1 value
-
-#### HR Measures
-- **Total Working Hours**: Sum of all working hours excluding vacation
-- **Total Monthly Salary**: Sum of all monthly salaries (shown as negative value)
-- **Employer Contribution**: Calculated employer contributions based on salary
-- **Pension Fee**: Calculated pension fees based on salary
-- **Vacation Pay**: Calculated vacation pay for hourly employees
-- **Total HR Cost**: Sum of all HR-related costs
-- **Average Hours Per Month**: Average working hours per month
-
-#### Financial Measures
-- **Other Costs**: Sum of all other costs (shown as negative value)
-- **TB2**: TB1 minus other costs
-- **Result in kr**: Final result in Swedish kronor after all costs
-
-#### Other Cost Breakdown
-- **Rent**: Rent costs
-- **Electricity**: Electricity costs
-- **Waste**: Waste management costs
-- **Water**: Water costs
-- **Telecom**: Telecommunication costs
-- **Cleaning**: Cleaning costs
-- **Other**: Miscellaneous costs
+- Sales Measures
+- Campaign Measures
+- HR Measures
+- Financial Measures
+- Other Cost Breakdown
 
 ## Reports and Visualizations
 
