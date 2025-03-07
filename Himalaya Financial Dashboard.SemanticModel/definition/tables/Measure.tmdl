@@ -1,6 +1,7 @@
 table Measure
 	lineageTag: ba14de99-88f9-4256-9025-69a87d33568d
 
+	// Calculates the total sales value from the Sales_Value column in the Fact_Sales table
 	measure Sales = SUM(Fact_Sales[Sales_Value])
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
 		displayFolder: Sales
@@ -8,13 +9,15 @@ table Measure
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure Marginal = SUM(Fact_Sales[Sales_Margin(kr)])
+	// Calculates the total margin in Swedish kronor from the Sales_Margin(kr) column
+	measure 'Margin kr' = SUM(Fact_Sales[Sales_Margin(kr)])
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
 		displayFolder: Sales
 		lineageTag: 5402a0f5-82ee-4fb6-84c6-bd41c9a63c1c
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
+	// Calculates sales for the same period last year using the SAMEPERIODLASTYEAR function
 	measure 'LY Sales 2' = CALCULATE([Sales], SAMEPERIODLASTYEAR(Dim_Date[Date]))
 		isHidden
 		displayFolder: Sales
@@ -24,11 +27,13 @@ table Measure
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	// Calculates the product price by subtracting the margin from sales
+	// Shows three alternative calculation methods (only the first one is active)
 	measure 'Product Price' =
 			
 			
 			--Altervatin 1:
-			[Sales] - [Marginal]
+			[Sales] - [Margin kr]
 			
 			--Altervatin 2:
 			--SUM(Fact_Sales[Sales_Value]) - SUM(Fact_Sales[Sales_Marginal(kr)])
@@ -45,23 +50,18 @@ table Measure
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
+	// Calculates the margin percentage by dividing the total margin by the total sales value
 	measure 'Margin %' = DIVIDE(SUM(Fact_Sales[Sales_Margin(kr)]),SUM(Fact_Sales[Sales_Value]))
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Sales
 		lineageTag: d620dcc8-0122-4122-baa4-cef336ba5d51
 
-	measure 'Summa arbetade timmar' = ```
-			CALCULATE(
-			                                    SUM(Fact_Tidrapporter[Timmar]), 
-			                                    Fact_Tidrapporter[Arbetstid/Semester] = "Arbetstid")
-			```
-		formatString: 0
-		lineageTag: e9785db3-b9d2-43dc-93a4-1e0baf22610b
-
+	// Utility measure that removes empty rows for discount by month name
+	// Returns the average campaign discount only when a single product is filtered
 	measure 'Ta bort tomma rader för rabatt för månadsnamn (Andreas)' =
 			
-			IF(HASONEFILTER(Dim_Product[Produkt Namn])
-			    , AVERAGE(Fact_Sales[Kampanj Rabatt %])
+			IF(HASONEFILTER(Dim_Product[Product Name])
+			    , AVERAGE(Fact_Sales[Campaign Discount %])
 			    , BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -70,18 +70,22 @@ table Measure
 
 		changedProperty = IsHidden
 
+	// Calculates the month-to-date sales using the TOTALMTD function
 	measure 'MTD Sales' = TOTALMTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
 		displayFolder: Sales
 		lineageTag: 9945341a-671b-47cc-8a0e-f97a92387c12
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	// Calculates the quarter-to-date sales using the TOTALQTD function
 	measure 'QTD Sales' = TOTALQTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
 		displayFolder: Sales
 		lineageTag: be159ea8-7fec-4de5-bdde-de26828a362f
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	// Calculates the week-to-date sales by determining the current week's start date
+	// and summing sales values between that date and the current date
 	measure 'WTD Sales' =
 			
 			var CurrentDate = LASTDATE(Dim_Date[Date] )
@@ -97,185 +101,239 @@ table Measure
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	// Calculates the year-to-date sales using the TOTALYTD function
 	measure 'YTD Sales' = TOTALYTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
 		displayFolder: Sales
 		lineageTag: 325104f4-f557-4007-b022-b244245ac557
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Totalpris ink Kampanj' = ```
-			[Sales] - [Kampanj Rabatt kr]
-			                          
-			```
-		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Kampanj
-		lineageTag: 989ac0c3-4504-4b79-a5ba-4cab55ae2846
-
-		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
-
-	measure 'Kampanj Rabatt kr' =
-			SUMX(
-			    Fact_Sales,
-			    Fact_Sales[Sales_Value]*Fact_Sales[Kampanj Rabatt %])
-		displayFolder: Kampanj
-		lineageTag: f4459b81-6c5d-4944-be3a-29985f7014ad
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'TB1 (Total Marginal Efter Kampanjveckor)' = [Marginal] - [Kampanj Rabatt kr]
+	// Calculates the total margin after campaign discounts (TB1)
+	// TB1 is a key financial metric representing margin after campaign costs
+	measure 'TB1 (Total Margin After Campaign Weeks)' = [Margin kr] - [Campaign Discount kr]
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
 		lineageTag: 23d7610b-138c-497c-8c03-fbf1a4453c21
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'TG1 (%)' = [TB1 (Total Marginal Efter Kampanjveckor)] / [Totalpris ink Kampanj]
+	// Calculates TB1 as a percentage of total price including campaign (TG1)
+	measure 'TG1 (%)' = [TB1 (Total Margin After Campaign Weeks)] / [Total Price incl Campaign]
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 0bfc0cd6-c9be-40b8-b226-058e22d8e9a3
 
-	measure TB2 = [TB1 (Total Marginal Efter Kampanjveckor)]-SUM(Fact_Ekonomi[Övriga Kostnader])
+	// Calculates TB2 by subtracting other costs from TB1
+	// TB2 is the next level financial metric after accounting for additional costs
+	measure TB2 = [TB1 (Total Margin After Campaign Weeks)]-SUM(Fact_Finance[Other Costs])
 		lineageTag: 6435f1b9-168b-4a2b-b464-b7a424603250
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure Pensionsavgift = SUMX(Fact_Tidrapporter, Fact_Tidrapporter[Månadslön utan övertid] * Fact_Tidrapporter[Dim_Personalregister.Pension (%)] /100 ) *-1
+	// Calculates the total working hours by summing hours where the type is "Arbetstid" (Working time)
+	measure 'Total Working Hours' = ```
+			CALCULATE(
+			                                    SUM(Fact_TimeReports[Hours]), 
+			                                    Fact_TimeReports[Working hours/Vacation] = "Arbetstid")
+			```
+		formatString: 0
+		lineageTag: f8a45db3-c9d2-48dc-b3a4-2e0baf22610c
+
+	// Calculates the total price including campaign effects by subtracting campaign discounts from sales
+	measure 'Total Price incl Campaign' = ```
+			[Sales] - [Campaign Discount kr]
+			                          
+			```
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		lineageTag: a9663dc0-188f-410b-b4b8-110c053be6e0
+		displayFolder: Campaign
+		lineageTag: 989ac0c3-4504-4b79-a5ba-4cab55ae2847
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure Arbetsgivaravgift = SUMX(Fact_Tidrapporter,Fact_Tidrapporter[Månadslön] * Fact_Tidrapporter[Dim_Personalregister.Arbetsgivaravgift (%)]/100 ) *-1
+	// Calculates the total campaign discount in kronor by multiplying sales value by discount percentage
+	measure 'Campaign Discount kr' =
+			SUMX(
+			    Fact_Sales,
+			    Fact_Sales[Sales_Value]*Fact_Sales[Campaign Discount %])
+		displayFolder: Campaign
+		lineageTag: f4459b81-6c5d-4944-be3a-29985f7014ae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	// Calculates the pension fee based on monthly salary and pension percentage
+	// Multiplied by -1 to show as a cost (negative value)
+	measure 'Pension Fee' = SUMX(Fact_TimeReports, Fact_TimeReports[Monthly Salary Without Overtime] * Fact_TimeReports[Dim_Personnel.Pension (%)] /100 ) *-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		lineageTag: f81ceaf2-3362-4e71-852e-c0e0b1d8101a
+		lineageTag: a9663dc0-188f-410b-b4b8-110c053be6e1
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure Semesterersättning = SUMX(Fact_Tidrapporter,Fact_Tidrapporter[Månadslön utan övertid] * Fact_Tidrapporter[Dim_Personalregister.Semestererättning timanställda (%)]/100) *-1
+	// Calculates the employer contribution based on monthly salary and contribution percentage
+	// Multiplied by -1 to show as a cost (negative value)
+	measure 'Employer Contribution' = SUMX(Fact_TimeReports, Fact_TimeReports[MonthlySalary] * Fact_TimeReports[Dim_Personnel.Employer Contribution (%)]/100 ) *-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		lineageTag: 1c0ff9cb-3fa6-460b-92c1-c7840ae580f2
+		lineageTag: f81ceaf2-3362-4e71-852e-c0e0b1d8101b
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'Total HR-kostnad' = ```
-			[Summa Månadslön] + [Arbetsgivaravgift] + [Pensionsavgift] + [Semesterersättning] 
+	// Calculates vacation pay for hourly employees based on monthly salary and vacation pay percentage
+	// Multiplied by -1 to show as a cost (negative value)
+	measure 'Vacation Pay' = SUMX(Fact_TimeReports, Fact_TimeReports[Monthly Salary Without Overtime] * Fact_TimeReports[Dim_Personnel.Vacation Pay Hourly Employees (%)]/100) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 1c0ff9cb-3fa6-460b-92c1-c7840ae580f3
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	// Calculates the total HR cost by summing all HR-related costs
+	// Includes salary, employer contributions, pension fees, and vacation pay
+	measure 'Total HR Cost' = ```
+			[Total Monthly Salary] + [Employer Contribution] + [Pension Fee] + [Vacation Pay] 
 			```
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
 		displayFolder: HR
-		lineageTag: b950ed2c-d796-403b-821d-a3769d09f820
+		lineageTag: b950ed2c-d796-403b-821d-a3769d09f821
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'Summa Månadslön' = SUM(Fact_Tidrapporter[Månadslön]) *-1
+	// Calculates the total monthly salary cost
+	// Multiplied by -1 to show as a cost (negative value)
+	measure 'Total Monthly Salary' = SUM(Fact_TimeReports[MonthlySalary]) *-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
 		displayFolder: HR
-		lineageTag: 7c4ab5af-b4c4-492b-9dcf-794e539d207d
+		lineageTag: 7c4ab5af-b4c4-492b-9dcf-794e539d207e
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'Resultat i kr' = ([TB1 (Total Marginal Efter Kampanjveckor)] + [Övriga kostnader] + [Total HR-kostnad])
+	// Calculates the final result in kronor by combining TB1, other costs, and HR costs
+	// This represents the bottom line profit/loss after all costs
+	measure 'Result in kr' = ([TB1 (Total Margin After Campaign Weeks)] + [Other Costs] + [Total HR Cost])
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		lineageTag: 0444696e-f4c1-4520-a56b-0d5876674969
+		lineageTag: 0444696e-f4c1-4520-a56b-0d5876674970
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'Resultat %' = [Resultat i kr] / [Totalpris ink Kampanj]
+	// Calculates the result as a percentage of total price including campaign
+	// This shows the profit margin as a percentage
+	measure 'Result %' = [Result in kr] / [Total Price incl Campaign]
 		formatString: 0%;-0%;0%
-		displayFolder: Kampanj
-		lineageTag: 4012e4fc-0eb1-42a3-93cd-abaa60a3034f
+		displayFolder: Campaign
+		lineageTag: 4012e4fc-0eb1-42a3-93cd-abaa60a3035f
 
-	measure 'Övriga kostnader' = SUM(Fact_Ekonomi[Övriga Kostnader]) *-1
+	// Calculates the total of other costs
+	// Multiplied by -1 to show as a cost (negative value)
+	measure 'Other Costs' = SUM(Fact_Finance[Other Costs]) *-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		lineageTag: 2dbcce02-124d-4ddf-90c4-5015b4ffb027
+		displayFolder: Campaign
+		lineageTag: 2dbcce02-124d-4ddf-90c4-5015b4ffb028
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Hyra' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Hyra")*-1
+	// Calculates the rent costs by filtering for "Hyra" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Rent' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Hyra")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: 9ba2d358-fcf2-4659-8869-36476caaa6da
+		displayFolder: Other Costs
+		lineageTag: 9ba2d358-fcf2-4659-8869-36476caaa6db
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- El' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "El") *-1
+	// Calculates the electricity costs by filtering for "El" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Electricity' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "El") *-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: f672b1a5-4647-49e2-bdea-9039785b4f16
+		displayFolder: Other Costs
+		lineageTag: f672b1a5-4647-49e2-bdea-9039785b4f17
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Sopor' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Sopor")*-1
+	// Calculates the waste management costs by filtering for "Sopor" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Waste' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Sopor")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: a397df58-0a47-44ea-af18-d8a93621170a
+		displayFolder: Other Costs
+		lineageTag: a397df58-0a47-44ea-af18-d8a93621170b
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Vatten' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Vatten")*-1
+	// Calculates the water costs by filtering for "Vatten" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Water' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Vatten")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: d486109d-c4bf-4b12-966d-6239d1060aa9
+		displayFolder: Other Costs
+		lineageTag: d486109d-c4bf-4b12-966d-6239d1060aa0
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Övrigt' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Övrigt")*-1
+	// Calculates other miscellaneous costs by filtering for "Övrigt" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Other' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Övrigt")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: 63aef561-0133-46f6-beb7-4a6a44f20abd
+		displayFolder: Other Costs
+		lineageTag: 63aef561-0133-46f6-beb7-4a6a44f20abe
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Tele' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Tele")*-1
+	// Calculates the telecommunication costs by filtering for "Tele" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Telecom' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Tele")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: c2087d98-cc1d-4975-b3ba-b06afc3d8728
+		displayFolder: Other Costs
+		lineageTag: c2087d98-cc1d-4975-b3ba-b06afc3d8729
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure '- Städning' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Städning")*-1
+	// Calculates the cleaning costs by filtering for "Städning" cost type
+	// Multiplied by -1 to show as a cost (negative value)
+	measure '- Cleaning' = CALCULATE(SUM(Fact_Finance[Other Costs]), Fact_Finance[Cost Type] = "Städning")*-1
 		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
-		displayFolder: Övriga kostnader
-		lineageTag: 909f8e67-4442-43d3-aeb1-37564fc1524e
+		displayFolder: Other Costs
+		lineageTag: 909f8e67-4442-43d3-aeb1-37564fc1524f
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	measure 'Max TB1 Kampanj Vecka' = ```
+	// Identifies the campaign week with the highest TB1 value
+	// First finds the maximum TB1 value among campaign weeks with discounts
+	// Then returns the campaign week number that achieved this maximum value
+	measure 'Max TB1 Campaign Week' = ```
 			
 			VAR MaxTB1 = 
 			    MAXX(
 			        FILTER(
-			            VALUES(Fact_Sales[Kampanj Vecka]),
+			            VALUES(Fact_Sales[Campaign Week]),
 			            CALCULATE(
-			                [Kampanj Rabatt kr] <> 0
+			                [Campaign Discount kr] <> 0
 			            )
 			        ),
-			        [TB1 (Total Marginal Efter Kampanjveckor)]
+			        [TB1 (Total Margin After Campaign Weeks)]
 			    )
 			RETURN
 			    CALCULATE(
 			        FIRSTNONBLANK(
-			            Fact_Sales[Kampanj Vecka],
-			            [TB1 (Total Marginal Efter Kampanjveckor)] = MaxTB1
+			            Fact_Sales[Campaign Week],
+			            [TB1 (Total Margin After Campaign Weeks)] = MaxTB1
 			        ),
 			        FILTER(
-			            ALL(Fact_Sales[Kampanj Vecka]),
-			            [TB1 (Total Marginal Efter Kampanjveckor)] = MaxTB1
+			            ALL(Fact_Sales[Campaign Week]),
+			            [TB1 (Total Margin After Campaign Weeks)] = MaxTB1
 			        )
 			    )
 			
 			```
 		formatString: 0
-		displayFolder: Kampanj
-		lineageTag: 90e45157-3803-4bb4-b2e6-b6f635fe8cd3
+		displayFolder: Campaign
+		lineageTag: 90e45157-3803-4bb4-b2e6-b6f635fe8cd4
 
-	measure GenomsnittTimPerMånad = ```
+	// Calculates the average working hours per month
+	// If there are no working hours, returns "Left" (indicating employee has left)
+	// Otherwise divides total working hours by 12 months
+	measure 'Average Hours Per Month' = ```
 			
 			IF(
-			    ISBLANK([Summa arbetade timmar]),
-			    "Slutat",
-			    [Summa arbetade timmar] / 12
+			    ISBLANK([Total Working Hours]),
+			    "Left",
+			    [Total Working Hours] / 12
 			)
 			
 			```
-		lineageTag: 477e49de-8523-4d30-b6bd-3e94a6e1ad1f
+		lineageTag: 477e49de-8523-4d30-b6bd-3e94a6e1ad2f
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 

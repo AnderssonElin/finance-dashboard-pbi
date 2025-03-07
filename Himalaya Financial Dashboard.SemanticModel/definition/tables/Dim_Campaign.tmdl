@@ -1,4 +1,4 @@
-table Dim_Kampanj
+table Dim_Campaign
 	lineageTag: b6aae0e9-506d-43ef-afba-7cd66d3e8713
 
 	column 'Kampanj Vecka'
@@ -10,29 +10,29 @@ table Dim_Kampanj
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Kampanj Namn'
+	column 'Campaign Week'
 		dataType: string
 		lineageTag: 02847bf8-b7d9-4d62-b823-0b0df01bb640
 		summarizeBy: none
-		sourceColumn: Kampanj Namn
+		sourceColumn: Campaign Week
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Vara (EAN-Nr)'
+	column 'Article (EAN-Nr)'
 		dataType: int64
 		formatString: 0
 		lineageTag: 2cd0fde5-4ea2-45e5-800c-a2bc6b7da306
 		summarizeBy: none
-		sourceColumn: Vara (EAN-Nr)
+		sourceColumn: Article (EAN-Nr)
 
 		annotation SummarizationSetBy = Automatic
 
-	column StartDatum
+	column StartDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
 		lineageTag: 94d4a4ee-7af8-49d4-99b8-ff0dc6f7442f
 		summarizeBy: none
-		sourceColumn: StartDatum
+		sourceColumn: StartDate
 
 		variation Variation
 			isDefault
@@ -45,12 +45,12 @@ table Dim_Kampanj
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column SlutDatum
+	column EndDate
 		dataType: dateTime
 		formatString: yyyy-mm-dd
 		lineageTag: 3dc90874-af98-4d59-b705-ada88a68ea6c
 		summarizeBy: none
-		sourceColumn: SlutDatum
+		sourceColumn: EndDate
 
 		variation Variation
 			isDefault
@@ -73,30 +73,30 @@ table Dim_Kampanj
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column 'Produkt ID'
+	column 'Product ID'
 		dataType: int64
 		formatString: 0
 		lineageTag: fab19ae5-0f4f-4511-b974-b0e241d1ecde
 		summarizeBy: count
-		sourceColumn: Produkt ID
+		sourceColumn: Product ID
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Dim_Kampanj = m
+	partition Dim_Campaign = m
 		mode: import
 		source =
 				let
-				    Source = Excel.Workbook(File.Contents("C:\Users\Thinkpad X13\OneDrive - Nackademin AB\Kurser\Systemförståelse och verksamhetsprocesser inom BI\Himalaya kött och video\Kampanj.xlsx"), null, true),
+				    Source = Excel.Workbook(File.Contents(campaignUrl), null, true),
 				    Kampanj_Sheet = Source{[Item="Kampanj",Kind="Sheet"]}[Data],
 				    #"Promoted Headers" = Table.PromoteHeaders(Kampanj_Sheet, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Kampanj ID", type text}, {"Kampanj Namn", type text}, {"Vara (EAN-Nr)", Int64.Type}, {"StartDatum", type any}, {"SlutDatum", type any}, {"Discount(%)", type number}}),
 				    #"Changed startdatum till swe" = Table.TransformColumnTypes(#"Changed Type", {{"StartDatum", type date}}, "sv-SE"),
 				    #"Changed slutdatum till swe" = Table.TransformColumnTypes(#"Changed startdatum till swe", {{"SlutDatum", type date}}, "sv-SE"),
-				    #"Merged Queries" = Table.NestedJoin(#"Changed slutdatum till swe", {"Vara (EAN-Nr)"}, Dim_Product, {"Produkt EAN/PLU"}, "Dim_Product", JoinKind.LeftOuter),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed slutdatum till swe", {"Vara (EAN-Nr)"}, Dim_Product, {"Product EAN/PLU"}, "Dim_Product", JoinKind.LeftOuter),
 				    #"Expanded Dim_Product" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Product", {"Produkt ID"}, {"Dim_Product.Produkt ID"}),
 				    #"Replaced Value" = Table.ReplaceValue(#"Expanded Dim_Product","K","",Replacer.ReplaceText,{"Kampanj ID"}),
 				    #"Changed Type1" = Table.TransformColumnTypes(#"Replaced Value",{{"Kampanj ID", Int64.Type}}),
-				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type1",{{"Kampanj ID", "Kampanj Vecka"}, {"Dim_Product.Produkt ID", "Produkt ID"}})
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type1",{{"Kampanj ID", "Kampanj Vecka"}, {"Dim_Product.Produkt ID", "Product ID"}, {"Kampanj Namn", "Campaign Week"}, {"SlutDatum", "EndDate"}, {"StartDatum", "StartDate"}, {"Vara (EAN-Nr)", "Article (EAN-Nr)"}})
 				in
 				    #"Renamed Columns"
 

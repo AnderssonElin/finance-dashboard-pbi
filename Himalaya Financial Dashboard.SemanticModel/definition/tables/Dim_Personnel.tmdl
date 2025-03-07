@@ -1,4 +1,4 @@
-table Dim_Personalregister
+table Dim_Personnel
 	lineageTag: 3b799bd8-fe14-4d0e-9aec-728b2694ea6b
 
 	column AnstID
@@ -10,31 +10,31 @@ table Dim_Personalregister
 
 		annotation SummarizationSetBy = User
 
-	column 'Fast lön'
+	column 'Fixed Salary'
 		dataType: int64
 		formatString: #,0
 		lineageTag: 2fb9f0ba-cd7c-4582-8fcc-0fa928d5122c
 		summarizeBy: sum
-		sourceColumn: Fast lön
+		sourceColumn: Fixed Salary
 
 		annotation SummarizationSetBy = User
 
-	column Övertidsersättning/h
+	column 'Overtime compensation/hour'
 		dataType: double
 		lineageTag: ad171db0-328a-446b-95f4-75e26b7da8ff
 		summarizeBy: sum
-		sourceColumn: Övertidsersättning/h
+		sourceColumn: Overtime compensation/hour
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column Födelsedatum
+	column Birthdate
 		dataType: dateTime
 		formatString: Long Date
 		lineageTag: 11f42eb2-3eb1-411f-b64b-38a9abe96129
 		summarizeBy: none
-		sourceColumn: Födelsedatum
+		sourceColumn: Birthdate
 
 		variation Variation
 			isDefault
@@ -45,20 +45,20 @@ table Dim_Personalregister
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column Anställningstyp
+	column 'Employment Type'
 		dataType: string
 		lineageTag: 2627cae8-9e73-404e-8b29-2b2a23743200
 		summarizeBy: none
-		sourceColumn: Anställningstyp
+		sourceColumn: Employment Type
 
 		annotation SummarizationSetBy = Automatic
 
-	column Normalarbetstid
+	column Normalworkinghours
 		dataType: int64
 		formatString: 0
 		lineageTag: 38b39616-92cf-4cca-b95e-1bfef8511755
 		summarizeBy: sum
-		sourceColumn: Normalarbetstid
+		sourceColumn: Normalworkinghours
 
 		annotation SummarizationSetBy = Automatic
 
@@ -70,12 +70,12 @@ table Dim_Personalregister
 
 		annotation SummarizationSetBy = Automatic
 
-	column Anställningsdag
+	column StartDate
 		dataType: dateTime
 		formatString: Long Date
 		lineageTag: a125ef88-27b4-4507-b17b-8a35e730cd78
 		summarizeBy: none
-		sourceColumn: Anställningsdag
+		sourceColumn: StartDate
 
 		variation Variation
 			isDefault
@@ -86,12 +86,12 @@ table Dim_Personalregister
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column Slutdatum
+	column EndDate
 		dataType: dateTime
 		formatString: Long Date
 		lineageTag: 5f78b204-09a5-4034-a631-aafb4a9bfd22
 		summarizeBy: none
-		sourceColumn: Slutdatum
+		sourceColumn: EndDate
 
 		variation Variation
 			isDefault
@@ -131,55 +131,55 @@ table Dim_Personalregister
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Semestererättning timanställda (%)'
+	column 'Holiday pay for hourly employees (%)'
 		dataType: int64
 		formatString: 0
 		lineageTag: 27f8fceb-81f6-4f07-8473-91d523322119
 		summarizeBy: sum
-		sourceColumn: Semestererättning timanställda (%)
+		sourceColumn: Holiday pay for hourly employees (%)
 
 		annotation SummarizationSetBy = Automatic
 
-	column Semestererdagar
+	column 'Vacation Days'
 		dataType: int64
 		formatString: 0
 		lineageTag: 377ca3a2-a5ba-4d50-a79b-e210e9daf526
 		summarizeBy: sum
-		sourceColumn: Semestererdagar
+		sourceColumn: Vacation Days
 
 		annotation SummarizationSetBy = Automatic
 
-	column Namn
+	column Name
 		dataType: string
 		lineageTag: 9d0be931-0b82-416f-ac57-7792f154bb23
 		summarizeBy: none
-		sourceColumn: Namn
+		sourceColumn: Name
 
 		annotation SummarizationSetBy = User
 
-	column Ålder
+	column Age
 		dataType: int64
 		formatString: 0
 		lineageTag: df4e0d7f-bdbc-4ead-ad4e-8620596ceec8
 		summarizeBy: none
-		sourceColumn: Ålder
+		sourceColumn: Age
 
 		annotation SummarizationSetBy = User
 
-	column Kön
+	column Gender
 		dataType: string
 		lineageTag: 5328cf7b-2d23-4256-8094-5f19381acdda
 		summarizeBy: none
-		sourceColumn: Kön
+		sourceColumn: Gender
 
 		annotation SummarizationSetBy = Automatic
 
-	column Timlön
+	column 'Hourly Rate'
 		dataType: int64
 		formatString: 0
 		lineageTag: e68efa65-6eab-40b3-b301-4239a3399f83
 		summarizeBy: sum
-		sourceColumn: Timlön
+		sourceColumn: Hourly Rate
 
 		annotation SummarizationSetBy = Automatic
 
@@ -203,11 +203,11 @@ table Dim_Personalregister
 
 		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
 
-	partition Dim_Personalregister = m
+	partition Dim_Personnel = m
 		mode: import
 		source = ```
 				let
-				    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+				    Source = SharePoint.Files(urlSharepoint, [ApiVersion = 15]),
 				    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "HR_2023-02-24.xlsx")),
 				    #"Filtered Hidden Files1" = Table.SelectRows(#"Filtered Rows", each [Attributes]?[Hidden]? <> true),
 				    #"Invoke Custom Function1" = Table.AddColumn(#"Filtered Hidden Files1", "Transform File", each #"Transform File"([Content])),
@@ -242,9 +242,10 @@ table Dim_Personalregister
 				else [Timlön]
 				),
 				    #"Changed Type with Locale2" = Table.TransformColumnTypes(#"Added Custom", {{"BeräkadTimlönSamtliga", Currency.Type}}, "sv-SE"),
-				    #"Replaced Value1" = Table.ReplaceValue(#"Changed Type with Locale2",#date(2024, 1, 1),#date(2023, 12, 31),Replacer.ReplaceValue,{"Slutdatum"})
+				    #"Replaced Value1" = Table.ReplaceValue(#"Changed Type with Locale2",#date(2024, 1, 1),#date(2023, 12, 31),Replacer.ReplaceValue,{"Slutdatum"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Replaced Value1",{{"Ålder", "Age"}, {"Anställningsdag", "StartDate"}, {"Anställningstyp", "Employment Type"}, {"Fast lön", "Fixed Salary"}, {"Födelsedatum", "Birthdate"}, {"Kön", "Gender"}, {"Namn", "Name"}, {"Normalarbetstid", "Normalworkinghours"}, {"Övertidsersättning/h", "Overtime compensation/hour"}, {"Semestererättning timanställda (%)", "Holiday pay for hourly employees (%)"}, {"Semestererdagar", "Vacation Days"}, {"Slutdatum", "EndDate"}, {"Timlön", "Hourly Rate"}})
 				in
-				    #"Replaced Value1"
+				    #"Renamed Columns1"
 				```
 
 	annotation PBI_NavigationStepName = Navigation

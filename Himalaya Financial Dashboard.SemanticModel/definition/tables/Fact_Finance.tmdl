@@ -1,19 +1,19 @@
-table Fact_Ekonomi
+table Fact_Finance
 	lineageTag: 91a5acd1-b21e-439d-ab2e-ea94f38500c5
 
-	column 'Typ av kostnad'
+	column 'Cost Type'
 		dataType: string
 		lineageTag: ec0a9b82-bf8c-41d3-b1ba-7e9bee0bbb1e
 		summarizeBy: none
-		sourceColumn: Typ av kostnad
+		sourceColumn: Cost Type
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Övriga Kostnader'
+	column 'Other Costs'
 		dataType: double
 		lineageTag: a481925c-f4f9-45f2-abe5-49de992f968b
 		summarizeBy: sum
-		sourceColumn: Övriga Kostnader
+		sourceColumn: Other Costs
 
 		annotation SummarizationSetBy = Automatic
 
@@ -30,28 +30,28 @@ table Fact_Ekonomi
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column Månad
+	column Month
 		dataType: string
 		lineageTag: 0743472a-f062-4fba-bd99-1ffe2bd42656
 		summarizeBy: none
-		sourceColumn: Månad
+		sourceColumn: Month
 
 		annotation SummarizationSetBy = Automatic
 
-	column År
+	column Year
 		dataType: int64
 		formatString: 0
 		lineageTag: 335b8070-1f4c-4252-a982-fb6e2fb1fa7d
 		summarizeBy: sum
-		sourceColumn: År
+		sourceColumn: Year
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Fact_Ekonomi = m
+	partition Fact_Finance = m
 		mode: import
 		source =
 				let
-				    Source = Excel.Workbook(File.Contents("C:\Users\Thinkpad X13\OneDrive - Nackademin AB\Kurser\Systemförståelse och verksamhetsprocesser inom BI\Himalaya kött och video\Ekonomi.xlsx"), null, true),
+				    Source = Excel.Workbook(File.Contents(financeUrl), null, true),
 				    Ekonomi_Sheet = Source{[Item="Ekonomi",Kind="Sheet"]}[Data],
 				    #"Promoted Headers" = Table.PromoteHeaders(Ekonomi_Sheet, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Månad", type text}, {"Typ av kostnad", type text}, {"Belopp", type number}, {"År", Int64.Type}}),
@@ -64,7 +64,7 @@ table Fact_Ekonomi
 				    #"Duplicated Column1" = Table.DuplicateColumn(#"Duplicated Column", "År", "År - Copy"),
 				    #"Merged Columns" = Table.CombineColumns(Table.TransformColumnTypes(#"Duplicated Column1", {{"År - Copy", type text}}, "en-US"),{"Månad - Copy", "År - Copy"},Combiner.CombineTextByDelimiter("-", QuoteStyle.None),"Merged"),
 				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Merged Columns", {{"Merged", type date}}, "sv-SE"),
-				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type with Locale",{{"Merged", "Date"}})
+				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type with Locale",{{"Merged", "Date"}, {"År", "Year"}, {"Månad", "Month"}, {"Övriga Kostnader", "Other Costs"}, {"Typ av kostnad", "Cost Type"}})
 				in
 				    #"Renamed Columns1"
 

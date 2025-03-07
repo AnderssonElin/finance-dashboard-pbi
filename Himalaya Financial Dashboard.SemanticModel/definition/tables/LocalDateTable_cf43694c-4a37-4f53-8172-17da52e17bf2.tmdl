@@ -105,7 +105,7 @@ table LocalDateTable_cf43694c-4a37-4f53-8172-17da52e17bf2
 
 	partition LocalDateTable_cf43694c-4a37-4f53-8172-17da52e17bf2 = calculated
 		mode: import
-		source = Calendar(Date(Year(MIN('Dim_Personalregister'[Födelsedatum])), 1, 1), Date(Year(MAX('Dim_Personalregister'[Födelsedatum])), 12, 31))
+		source = Calendar(Date(Year(MIN('Dim_Personnel'[Birthdate])), 1, 1), Date(Year(MAX('Dim_Personnel'[Birthdate])), 12, 31))
 
 	annotation __PBI_LocalDateTable = true
 

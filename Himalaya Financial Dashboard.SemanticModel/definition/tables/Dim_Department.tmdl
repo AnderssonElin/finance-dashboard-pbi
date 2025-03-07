@@ -1,37 +1,37 @@
 table Dim_Department
 	lineageTag: 91d34cf7-3a95-4ea5-ba08-78525f0f2bb9
 
-	column VgrID
+	column GroupID
 		dataType: int64
 		formatString: 0
 		lineageTag: 9c59204f-525a-45bc-87ef-2f4a6cbbd3ec
 		summarizeBy: none
-		sourceColumn: VgrID
+		sourceColumn: GroupID
 
 		annotation SummarizationSetBy = Automatic
 
-	column VgrName
+	column GroupName
 		dataType: string
 		lineageTag: 2b999f36-94c4-4bd2-bb50-afcf8aae45d7
 		summarizeBy: none
-		sourceColumn: VgrName
+		sourceColumn: GroupName
 
 		annotation SummarizationSetBy = Automatic
 
-	column AvdID
+	column DepID
 		dataType: int64
 		formatString: 0
 		lineageTag: 57b90221-4854-42a0-85fa-0851d905d84c
 		summarizeBy: none
-		sourceColumn: AvdID
+		sourceColumn: DepID
 
 		annotation SummarizationSetBy = Automatic
 
-	column AvdName
+	column DepName
 		dataType: string
 		lineageTag: 92852fd8-66eb-4eb8-9e1b-40b336d23cbe
 		summarizeBy: none
-		sourceColumn: AvdName
+		sourceColumn: DepName
 
 		annotation SummarizationSetBy = Automatic
 
@@ -39,7 +39,7 @@ table Dim_Department
 		mode: import
 		source =
 				let
-				    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+				    Source = SharePoint.Files(urlSharepoint, [ApiVersion = 15]),
 				    #"Filtrerade rader" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "Avdelningar.xlsx")),
 				    #"Filtrerade dolda filer1" = Table.SelectRows(#"Filtrerade rader", each [Attributes]?[Hidden]? <> true),
 				    #"Anropa anpassad funktion1" = Table.AddColumn(#"Filtrerade dolda filer1", "Transformera fil", each #"Transformera fil"([Content])),
@@ -52,7 +52,7 @@ table Dim_Department
 				    #"Changed Type2" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"VGR.1", Int64.Type}, {"VGR.2", type text}}),
 				    #"Split Column by Delimiter1" = Table.SplitColumn(#"Changed Type2", "AVD", Splitter.SplitTextByEachDelimiter({"-"}, QuoteStyle.Csv, false), {"AVD.1", "AVD.2"}),
 				    #"Changed Type3" = Table.TransformColumnTypes(#"Split Column by Delimiter1",{{"AVD.1", Int64.Type}, {"AVD.2", type text}}),
-				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type3",{{"VGR.1", "VgrID"}, {"VGR.2", "VgrName"}, {"AVD.1", "AvdID"}, {"AVD.2", "AvdName"}})
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type3",{{"VGR.1", "GroupID"}, {"VGR.2", "GroupName"}, {"AVD.1", "DepID"}, {"AVD.2", "DepName"}})
 				in
 				    #"Renamed Columns"
 

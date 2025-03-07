@@ -7,14 +7,6 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-queryGroup 'Transform File from Personalregister'
-
-	annotation PBI_QueryGroupOrder = 0
-
-queryGroup 'Transform File from Personalregister\Helper Queries'
-
-	annotation PBI_QueryGroupOrder = 0
-
 queryGroup 'Transform File from Query1'
 
 	annotation PBI_QueryGroupOrder = 2
@@ -23,15 +15,27 @@ queryGroup 'Transform File from Query1\Helper Queries'
 
 	annotation PBI_QueryGroupOrder = 0
 
-queryGroup 'Omvandla fil från Dim_Department'
-
-	annotation PBI_QueryGroupOrder = 4
-
-queryGroup 'Omvandla fil från Dim_Department\Hjälpfrågor'
+queryGroup 'Transform File from Personnel'
 
 	annotation PBI_QueryGroupOrder = 0
 
-annotation PBI_QueryOrder = ["Dim_Date","Dim_Product","Fact_Sales","Dim_Department","Measure","Dim_Personalregister","Fact_Tidrapporter","Parameter1","Transform Sample File","Sample File","Transform File","Parameter2","Transform Sample File (2)","Sample File (2)","Transform File (2)","Parameter3","Transformera exempelfil","Exempelfil","Transformera fil","Dim_Kampanj","Fact_Ekonomi"]
+queryGroup 'Transform File from Personnel\Helper Queries'
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup 'Transform File from Dim_Department'
+
+	annotation PBI_QueryGroupOrder = 4
+
+queryGroup 'Transform File from Dim_Department\Helper Queries'
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup Parameters
+
+	annotation PBI_QueryGroupOrder = 6
+
+annotation PBI_QueryOrder = ["Dim_Date","Dim_Product","Fact_Sales","Dim_Department","Measure","Dim_Personnel","Fact_TimeReports","Parameter1","Transform Sample File","Sample File","Transform File","Parameter2","Transform Sample File (2)","Sample File (2)","Transform File (2)","Parameter3","Transform Sample File (3)","Exempelfil","Transformera fil","Dim_Campaign","Fact_Finance","server","urlSharepoint","campaignUrl","financeUrl"]
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
@@ -46,15 +50,15 @@ ref table Fact_Sales
 ref table Dim_Department
 ref table Measure
 ref table LocalDateTable_b2786ffb-4689-4ffc-95ed-bc96afd400d4
-ref table Dim_Personalregister
+ref table Dim_Personnel
 ref table LocalDateTable_cf43694c-4a37-4f53-8172-17da52e17bf2
 ref table LocalDateTable_b9a0f919-e8b0-4cb0-85ae-720558d35141
 ref table LocalDateTable_6fd08304-ccd4-40e7-946b-ea05ab1498ad
-ref table Fact_Tidrapporter
-ref table Dim_Kampanj
+ref table Fact_TimeReports
+ref table Dim_Campaign
 ref table LocalDateTable_5c791ee3-9abc-4f98-ba0b-ac466afe8486
 ref table LocalDateTable_192b99cc-5dbf-4610-838f-55374349c35e
-ref table Fact_Ekonomi
+ref table Fact_Finance
 ref table 'Periodic Sales Measure '
 
 ref cultureInfo en-US

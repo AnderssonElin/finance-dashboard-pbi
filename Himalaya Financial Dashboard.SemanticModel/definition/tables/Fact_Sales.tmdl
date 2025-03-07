@@ -1,12 +1,12 @@
 table Fact_Sales
 	lineageTag: 57b5de44-a46a-47f8-a303-52dfb1901e03
 
-	column 'Produkt ID'
+	column 'Product ID'
 		dataType: int64
 		formatString: 0
 		lineageTag: a0b159c8-32ea-49db-8d52-90df79c30841
 		summarizeBy: none
-		sourceColumn: Produkt ID
+		sourceColumn: Product ID
 
 		annotation SummarizationSetBy = Automatic
 
@@ -64,21 +64,21 @@ table Fact_Sales
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column 'Kampanj Vecka'
+	column 'Campaign Week'
 		dataType: int64
 		formatString: 0
 		lineageTag: 0e696eef-5d73-4033-b226-5f4e793c3e1f
 		summarizeBy: sum
-		sourceColumn: Kampanj Vecka
+		sourceColumn: Campaign Week
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Kampanj Rabatt %'
+	column 'Campaign Discount %'
 		dataType: double
 		formatString: 0%;-0%;0%
 		lineageTag: 697be4d4-a5e6-4dc2-9e23-eac9c3ba7162
 		summarizeBy: sum
-		sourceColumn: Kampanj Rabatt %
+		sourceColumn: Campaign Discount %
 
 		annotation SummarizationSetBy = Automatic
 
@@ -86,20 +86,20 @@ table Fact_Sales
 		mode: import
 		source =
 				let
-				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    Source = Sql.Database(server, "Xlent_Himalaya_DW"),
 				    dbo_Fact_Sales = Source{[Schema="dbo",Item="Fact_Sales"]}[Data],
 				    #"Merged Columns" = Table.CombineColumns(dbo_Fact_Sales,{"Sales_Year", "Sales_Month", "Sales_Day"},Combiner.CombineTextByDelimiter("-", QuoteStyle.None),"Sales Date"),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Merged Columns",{{"Sales Date", type date }}),
-				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type",{{"Sales_ProductID", "Produkt ID"}}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type",{{"Sales_ProductID", "Product ID"}}),
 				    #"Inserted Start of Week" = Table.AddColumn(#"Renamed Columns1", "Start of Week", each Date.StartOfWeek([Sales Date],1)),
 				    #"Inserted End of Week" = Table.AddColumn(#"Inserted Start of Week", "End of Week", each Date.EndOfWeek([Sales Date],1), type date),
 				    #"Changed Type1" = Table.TransformColumnTypes(#"Inserted End of Week",{{"Start of Week", type date}}),
-				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"Produkt ID", "Start of Week", "End of Week"}, Dim_Kampanj, {"Produkt ID", "StartDatum", "SlutDatum"}, "Dim_Kampanj", JoinKind.LeftOuter),
-				    #"Expanded Dim_Kampanj" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Kampanj", {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}, {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}),
-				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Dim_Kampanj",{"Start of Week", "End of Week"}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"Product ID", "Start of Week", "End of Week"}, Dim_Campaign, {"Product ID", "StartDate", "EndDate"}, "Dim_Campaign", JoinKind.LeftOuter),
+				    #"Expanded Dim_Campaign" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Campaign", {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}, {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Dim_Campaign",{"Start of Week", "End of Week"}),
 				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Discount(%)", "Kampanj Rabatt"}}),
 				    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns",{"StartDatum", "SlutDatum"}),
-				    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns1",{{"Kampanj Rabatt", "Kampanj Rabatt %"}})
+				    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns1",{{"Kampanj Rabatt", "Campaign Discount %"}, {"Kampanj Vecka", "Campaign Week"}})
 				in
 				    #"Renamed Columns2"
 

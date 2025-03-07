@@ -139,7 +139,7 @@ table Dim_Date
 		mode: import
 		source =
 				let
-				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    Source = Sql.Database(server, "Xlent_Himalaya_DW"),
 				    dbo_Dim_Date = Source{[Schema="dbo",Item="Dim_Date"]}[Data],
 				    #"Changed Type with Locale" = Table.TransformColumnTypes(dbo_Dim_Date, {{"Date", type date, Day.Monday}}, "sv-SE")
 				in

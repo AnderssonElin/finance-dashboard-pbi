@@ -25,20 +25,20 @@ table Dim_Product
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Produkt EAN/PLU'
+	column 'Product EAN/PLU'
 		dataType: int64
 		formatString: 0
 		lineageTag: bccde46e-dec5-4197-a251-529cc0a93765
 		summarizeBy: none
-		sourceColumn: Produkt EAN/PLU
+		sourceColumn: Product EAN/PLU
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Produkt Namn'
+	column 'Product Name'
 		dataType: string
 		lineageTag: ee291bbc-8740-40b8-bf7f-d7f0667d9dde
 		summarizeBy: none
-		sourceColumn: Produkt Namn
+		sourceColumn: Product Name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -46,14 +46,14 @@ table Dim_Product
 		mode: import
 		source =
 				let
-				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    Source = Sql.Database(server, "Xlent_Himalaya_DW"),
 				    dbo_Dim_Product = Source{[Schema="dbo",Item="Dim_Product"]}[Data],
 				    #"Split Column by Delimiter" = Table.SplitColumn(dbo_Dim_Product, "Product_Produkt", Splitter.SplitTextByEachDelimiter({"-"}, QuoteStyle.Csv, false), {"Product_Produkt.1", "Product_Produkt.2"}),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Product_Produkt.1", Int64.Type}, {"Product_Produkt.2", type text}}),
 				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Product_Produkt.1", "Product_EAN/PLU"}, {"Product_Produkt.2", "Product_ProduktName"}}),
 				    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns",{{"Product_VGR", Int64.Type}}),
 				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type1",{"Product_AssortmentKode", "Product_Uppload"}),
-				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Product_ProduktName", "Produkt Namn"}, {"Product_ID", "Produkt ID"}, {"Product_VGR", "Produkt VGR"}, {"Product_EAN/PLU", "Produkt EAN/PLU"}})
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Product_ProduktName", "Product Name"}, {"Product_ID", "Produkt ID"}, {"Product_VGR", "Produkt VGR"}, {"Product_EAN/PLU", "Product EAN/PLU"}})
 				in
 				    #"Renamed Columns1"
 
