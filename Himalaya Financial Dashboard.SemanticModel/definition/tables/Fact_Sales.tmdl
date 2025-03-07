@@ -1,0 +1,109 @@
+table Fact_Sales
+	lineageTag: 57b5de44-a46a-47f8-a303-52dfb1901e03
+
+	column 'Produkt ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: a0b159c8-32ea-49db-8d52-90df79c30841
+		summarizeBy: none
+		sourceColumn: Produkt ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_Quantity
+		dataType: double
+		lineageTag: ba7a2544-8bb2-41b8-a409-d13ece67f4bc
+		summarizeBy: sum
+		sourceColumn: Sales_Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Weight
+		dataType: double
+		lineageTag: a4ff651e-709f-4734-bf48-5051955bd09e
+		summarizeBy: sum
+		sourceColumn: Sales_Weight
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Value
+		dataType: double
+		lineageTag: 852c1961-268d-4054-b785-dab7387e9538
+		summarizeBy: sum
+		sourceColumn: Sales_Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Margin(kr)
+		dataType: double
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 911d59e8-c00e-4c96-8423-9a80202fad21
+		summarizeBy: sum
+		sourceColumn: Sales_Margin(kr)
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	column 'Sales Date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 95bb3009-83e0-4ab0-bd02-f9d58065e138
+		summarizeBy: none
+		sourceColumn: Sales Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Kampanj Vecka'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e696eef-5d73-4033-b226-5f4e793c3e1f
+		summarizeBy: sum
+		sourceColumn: Kampanj Vecka
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kampanj Rabatt %'
+		dataType: double
+		formatString: 0%;-0%;0%
+		lineageTag: 697be4d4-a5e6-4dc2-9e23-eac9c3ba7162
+		summarizeBy: sum
+		sourceColumn: Kampanj Rabatt %
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Sales = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    dbo_Fact_Sales = Source{[Schema="dbo",Item="Fact_Sales"]}[Data],
+				    #"Merged Columns" = Table.CombineColumns(dbo_Fact_Sales,{"Sales_Year", "Sales_Month", "Sales_Day"},Combiner.CombineTextByDelimiter("-", QuoteStyle.None),"Sales Date"),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Merged Columns",{{"Sales Date", type date }}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type",{{"Sales_ProductID", "Produkt ID"}}),
+				    #"Inserted Start of Week" = Table.AddColumn(#"Renamed Columns1", "Start of Week", each Date.StartOfWeek([Sales Date],1)),
+				    #"Inserted End of Week" = Table.AddColumn(#"Inserted Start of Week", "End of Week", each Date.EndOfWeek([Sales Date],1), type date),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Inserted End of Week",{{"Start of Week", type date}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"Produkt ID", "Start of Week", "End of Week"}, Dim_Kampanj, {"Produkt ID", "StartDatum", "SlutDatum"}, "Dim_Kampanj", JoinKind.LeftOuter),
+				    #"Expanded Dim_Kampanj" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Kampanj", {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}, {"Kampanj Vecka", "StartDatum", "SlutDatum", "Discount(%)"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Dim_Kampanj",{"Start of Week", "End of Week"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Discount(%)", "Kampanj Rabatt"}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns",{"StartDatum", "SlutDatum"}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns1",{{"Kampanj Rabatt", "Kampanj Rabatt %"}})
+				in
+				    #"Renamed Columns2"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

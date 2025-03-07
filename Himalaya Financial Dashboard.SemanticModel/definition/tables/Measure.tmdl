@@ -1,0 +1,293 @@
+table Measure
+	lineageTag: ba14de99-88f9-4256-9025-69a87d33568d
+
+	measure Sales = SUM(Fact_Sales[Sales_Value])
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Sales
+		lineageTag: 86db7fe2-a8fd-4af8-9799-7f9492f5f6b2
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure Marginal = SUM(Fact_Sales[Sales_Margin(kr)])
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Sales
+		lineageTag: 5402a0f5-82ee-4fb6-84c6-bd41c9a63c1c
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'LY Sales 2' = CALCULATE([Sales], SAMEPERIODLASTYEAR(Dim_Date[Date]))
+		isHidden
+		displayFolder: Sales
+		lineageTag: 60ec3697-df54-438b-ae1a-9c78f5102619
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Product Price' =
+			
+			
+			--Altervatin 1:
+			[Sales] - [Marginal]
+			
+			--Altervatin 2:
+			--SUM(Fact_Sales[Sales_Value]) - SUM(Fact_Sales[Sales_Marginal(kr)])
+			
+			--Altervatin 3:
+			--VAR _Sales = SUM(Fact_Sales[Sales_Value])
+			--VAR _Margin = SUM(Fact_Sales[Sales_Marginal(kr)])
+			
+			--RETURN
+			--_Sales - _Marginal
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Sales
+		lineageTag: 9eea197e-5145-4782-823e-c86015951734
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Margin %' = DIVIDE(SUM(Fact_Sales[Sales_Margin(kr)]),SUM(Fact_Sales[Sales_Value]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Sales
+		lineageTag: d620dcc8-0122-4122-baa4-cef336ba5d51
+
+	measure 'Summa arbetade timmar' = ```
+			CALCULATE(
+			                                    SUM(Fact_Tidrapporter[Timmar]), 
+			                                    Fact_Tidrapporter[Arbetstid/Semester] = "Arbetstid")
+			```
+		formatString: 0
+		lineageTag: e9785db3-b9d2-43dc-93a4-1e0baf22610b
+
+	measure 'Ta bort tomma rader för rabatt för månadsnamn (Andreas)' =
+			
+			IF(HASONEFILTER(Dim_Product[Produkt Namn])
+			    , AVERAGE(Fact_Sales[Kampanj Rabatt %])
+			    , BLANK()
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		lineageTag: a8c67e01-b90e-49f4-961e-20ee430e0551
+
+		changedProperty = IsHidden
+
+	measure 'MTD Sales' = TOTALMTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
+		displayFolder: Sales
+		lineageTag: 9945341a-671b-47cc-8a0e-f97a92387c12
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QTD Sales' = TOTALQTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
+		displayFolder: Sales
+		lineageTag: be159ea8-7fec-4de5-bdde-de26828a362f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'WTD Sales' =
+			
+			var CurrentDate = LASTDATE(Dim_Date[Date] )
+			var DayNumberOfWeek = WEEKDAY(LASTDATE(Dim_Date[Date]),3)
+			RETURN
+			    CALCULATE(
+			      SUM(Fact_Sales[Sales_Value] )
+			      , DATESBETWEEN (Dim_Date[Date]
+			      , DATEADD(CurrentDate, -1*DayNumberOfWeek, DAY), CurrentDate )
+			    )
+		displayFolder: Sales
+		lineageTag: d5d0267c-bc5b-4bdf-ab72-6df614d76ad4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YTD Sales' = TOTALYTD(SUM(Fact_Sales[Sales_Value]), Dim_Date[Date])
+		displayFolder: Sales
+		lineageTag: 325104f4-f557-4007-b022-b244245ac557
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Totalpris ink Kampanj' = ```
+			[Sales] - [Kampanj Rabatt kr]
+			                          
+			```
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Kampanj
+		lineageTag: 989ac0c3-4504-4b79-a5ba-4cab55ae2846
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Kampanj Rabatt kr' =
+			SUMX(
+			    Fact_Sales,
+			    Fact_Sales[Sales_Value]*Fact_Sales[Kampanj Rabatt %])
+		displayFolder: Kampanj
+		lineageTag: f4459b81-6c5d-4944-be3a-29985f7014ad
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'TB1 (Total Marginal Efter Kampanjveckor)' = [Marginal] - [Kampanj Rabatt kr]
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 23d7610b-138c-497c-8c03-fbf1a4453c21
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'TG1 (%)' = [TB1 (Total Marginal Efter Kampanjveckor)] / [Totalpris ink Kampanj]
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 0bfc0cd6-c9be-40b8-b226-058e22d8e9a3
+
+	measure TB2 = [TB1 (Total Marginal Efter Kampanjveckor)]-SUM(Fact_Ekonomi[Övriga Kostnader])
+		lineageTag: 6435f1b9-168b-4a2b-b464-b7a424603250
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Pensionsavgift = SUMX(Fact_Tidrapporter, Fact_Tidrapporter[Månadslön utan övertid] * Fact_Tidrapporter[Dim_Personalregister.Pension (%)] /100 ) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: a9663dc0-188f-410b-b4b8-110c053be6e0
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure Arbetsgivaravgift = SUMX(Fact_Tidrapporter,Fact_Tidrapporter[Månadslön] * Fact_Tidrapporter[Dim_Personalregister.Arbetsgivaravgift (%)]/100 ) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: f81ceaf2-3362-4e71-852e-c0e0b1d8101a
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure Semesterersättning = SUMX(Fact_Tidrapporter,Fact_Tidrapporter[Månadslön utan övertid] * Fact_Tidrapporter[Dim_Personalregister.Semestererättning timanställda (%)]/100) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 1c0ff9cb-3fa6-460b-92c1-c7840ae580f2
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Total HR-kostnad' = ```
+			[Summa Månadslön] + [Arbetsgivaravgift] + [Pensionsavgift] + [Semesterersättning] 
+			```
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: HR
+		lineageTag: b950ed2c-d796-403b-821d-a3769d09f820
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Summa Månadslön' = SUM(Fact_Tidrapporter[Månadslön]) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: HR
+		lineageTag: 7c4ab5af-b4c4-492b-9dcf-794e539d207d
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Resultat i kr' = ([TB1 (Total Marginal Efter Kampanjveckor)] + [Övriga kostnader] + [Total HR-kostnad])
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 0444696e-f4c1-4520-a56b-0d5876674969
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Resultat %' = [Resultat i kr] / [Totalpris ink Kampanj]
+		formatString: 0%;-0%;0%
+		displayFolder: Kampanj
+		lineageTag: 4012e4fc-0eb1-42a3-93cd-abaa60a3034f
+
+	measure 'Övriga kostnader' = SUM(Fact_Ekonomi[Övriga Kostnader]) *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		lineageTag: 2dbcce02-124d-4ddf-90c4-5015b4ffb027
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Hyra' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Hyra")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: 9ba2d358-fcf2-4659-8869-36476caaa6da
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- El' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "El") *-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: f672b1a5-4647-49e2-bdea-9039785b4f16
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Sopor' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Sopor")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: a397df58-0a47-44ea-af18-d8a93621170a
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Vatten' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Vatten")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: d486109d-c4bf-4b12-966d-6239d1060aa9
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Övrigt' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Övrigt")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: 63aef561-0133-46f6-beb7-4a6a44f20abd
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Tele' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Tele")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: c2087d98-cc1d-4975-b3ba-b06afc3d8728
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure '- Städning' = CALCULATE(SUM(Fact_Ekonomi[Övriga kostnader]), Fact_Ekonomi[Typ av kostnad] = "Städning")*-1
+		formatString: #,0\ "kr";-#,0\ "kr";#,0\ "kr"
+		displayFolder: Övriga kostnader
+		lineageTag: 909f8e67-4442-43d3-aeb1-37564fc1524e
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	measure 'Max TB1 Kampanj Vecka' = ```
+			
+			VAR MaxTB1 = 
+			    MAXX(
+			        FILTER(
+			            VALUES(Fact_Sales[Kampanj Vecka]),
+			            CALCULATE(
+			                [Kampanj Rabatt kr] <> 0
+			            )
+			        ),
+			        [TB1 (Total Marginal Efter Kampanjveckor)]
+			    )
+			RETURN
+			    CALCULATE(
+			        FIRSTNONBLANK(
+			            Fact_Sales[Kampanj Vecka],
+			            [TB1 (Total Marginal Efter Kampanjveckor)] = MaxTB1
+			        ),
+			        FILTER(
+			            ALL(Fact_Sales[Kampanj Vecka]),
+			            [TB1 (Total Marginal Efter Kampanjveckor)] = MaxTB1
+			        )
+			    )
+			
+			```
+		formatString: 0
+		displayFolder: Kampanj
+		lineageTag: 90e45157-3803-4bb4-b2e6-b6f635fe8cd3
+
+	measure GenomsnittTimPerMånad = ```
+			
+			IF(
+			    ISBLANK([Summa arbetade timmar]),
+			    "Slutat",
+			    [Summa arbetade timmar] / 12
+			)
+			
+			```
+		lineageTag: 477e49de-8523-4d30-b6bd-3e94a6e1ad1f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Measure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

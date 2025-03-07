@@ -1,0 +1,150 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 5,
+            "y": 347.76785714285711
+          },
+          "nodeIndex": "Dim_Date",
+          "nodeLineageTag": "6bfe8de4-2b89-4c45-b708-10ea3eac7f86",
+          "size": {
+            "height": 495.27454569928659,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 909.00000000000011,
+            "y": 16.875
+          },
+          "nodeIndex": "Dim_Department",
+          "nodeLineageTag": "91d34cf7-3a95-4ea5-ba08-78525f0f2bb9",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 656.39285714285711,
+            "y": 115.30357142857142
+          },
+          "nodeIndex": "Dim_Product",
+          "nodeLineageTag": "8bdace9f-5235-4475-83bc-d51b59b2906c",
+          "size": {
+            "height": 201,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 349.14285714285722,
+            "y": 138.48214285714283
+          },
+          "nodeIndex": "Fact_Sales",
+          "nodeLineageTag": "57b5de44-a46a-47f8-a303-52dfb1901e03",
+          "size": {
+            "height": 399.5,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1195.2568201193521,
+            "y": 144.16339361831689
+          },
+          "nodeIndex": "Measure",
+          "nodeLineageTag": "ba14de99-88f9-4256-9025-69a87d33568d",
+          "size": {
+            "height": 260.8489982949701,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 813.59185583253986,
+            "y": 881.9300877425319
+          },
+          "nodeIndex": "Dim_Personalregister",
+          "nodeLineageTag": "3b799bd8-fe14-4d0e-9aec-728b2694ea6b",
+          "size": {
+            "height": 578,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 298.6603015081476,
+            "y": 878.74127494529534
+          },
+          "nodeIndex": "Fact_Tidrapporter",
+          "nodeLineageTag": "69624a9a-ea77-440d-87f7-ee50c859c52e",
+          "size": {
+            "height": 498,
+            "width": 385.10530321968611
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 922.27291849153926,
+            "y": 299.27675741907427
+          },
+          "nodeIndex": "Dim_Kampanj",
+          "size": {
+            "height": 275.01466526811623,
+            "width": 206.5
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 33.333333333333329,
+            "y": 0
+          },
+          "nodeIndex": "Fact_Ekonomi",
+          "size": {
+            "height": 225.8835540838852,
+            "width": 289.75220750551875
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1474.2568201193521,
+            "y": 512.46265151369471
+          },
+          "nodeIndex": "Periodic Sales Measure ",
+          "nodeLineageTag": "bf51fedc-a09d-49bd-b7d8-0a89c69d7334",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 67.970198575073113,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

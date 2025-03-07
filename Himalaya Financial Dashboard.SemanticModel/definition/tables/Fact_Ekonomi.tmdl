@@ -1,0 +1,74 @@
+table Fact_Ekonomi
+	lineageTag: 91a5acd1-b21e-439d-ab2e-ea94f38500c5
+
+	column 'Typ av kostnad'
+		dataType: string
+		lineageTag: ec0a9b82-bf8c-41d3-b1ba-7e9bee0bbb1e
+		summarizeBy: none
+		sourceColumn: Typ av kostnad
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Övriga Kostnader'
+		dataType: double
+		lineageTag: a481925c-f4f9-45f2-abe5-49de992f968b
+		summarizeBy: sum
+		sourceColumn: Övriga Kostnader
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: e9d271a0-8f61-410e-8b90-1d5a16eebebf
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Månad
+		dataType: string
+		lineageTag: 0743472a-f062-4fba-bd99-1ffe2bd42656
+		summarizeBy: none
+		sourceColumn: Månad
+
+		annotation SummarizationSetBy = Automatic
+
+	column År
+		dataType: int64
+		formatString: 0
+		lineageTag: 335b8070-1f4c-4252-a982-fb6e2fb1fa7d
+		summarizeBy: sum
+		sourceColumn: År
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Ekonomi = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Thinkpad X13\OneDrive - Nackademin AB\Kurser\Systemförståelse och verksamhetsprocesser inom BI\Himalaya kött och video\Ekonomi.xlsx"), null, true),
+				    Ekonomi_Sheet = Source{[Item="Ekonomi",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Ekonomi_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Månad", type text}, {"Typ av kostnad", type text}, {"Belopp", type number}, {"År", Int64.Type}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Changed Type","Augutsi","Augusti",Replacer.ReplaceText,{"Månad"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","Sept","September",Replacer.ReplaceText,{"Månad"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","Nov","November",Replacer.ReplaceText,{"Månad"}),
+				    #"Multiplied Column" = Table.TransformColumns(#"Replaced Value2", {{"Belopp", each _ * 1000, type number}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Multiplied Column",{{"Belopp", "Övriga Kostnader"}}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Renamed Columns", "Månad", "Månad - Copy"),
+				    #"Duplicated Column1" = Table.DuplicateColumn(#"Duplicated Column", "År", "År - Copy"),
+				    #"Merged Columns" = Table.CombineColumns(Table.TransformColumnTypes(#"Duplicated Column1", {{"År - Copy", type text}}, "en-US"),{"Månad - Copy", "År - Copy"},Combiner.CombineTextByDelimiter("-", QuoteStyle.None),"Merged"),
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Merged Columns", {{"Merged", type date}}, "sv-SE"),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type with Locale",{{"Merged", "Date"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

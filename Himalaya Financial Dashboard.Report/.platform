@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Himalaya Financial Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "90ab3233-dc85-40fe-95e6-2b42ef55bfb5"
+  }
+}

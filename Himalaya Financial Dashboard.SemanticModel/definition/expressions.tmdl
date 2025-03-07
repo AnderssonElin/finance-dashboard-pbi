@@ -1,0 +1,133 @@
+expression Parameter1 = #"Sample File" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 4a182d37-37a2-45be-adb0-327090dfcb4b
+	queryGroup: 'Transform File from Personalregister\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File' =
+		let
+		    Source = Excel.Workbook(Parameter1, null, true),
+		    Table1_Table = Source{[Item="Table1",Kind="Table"]}[Data]
+		in
+		    Table1_Table
+	lineageTag: 57101173-f700-49ab-a94c-6287b2396213
+	queryGroup: 'Transform File from Personalregister'
+
+	annotation PBI_ResultType = Table
+
+expression 'Sample File' =
+		let
+		    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+		    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "HR_2023-02-24.xlsx")),
+		    Navigation1 = #"Filtered Rows"{0}[Content]
+		in
+		    Navigation1
+	lineageTag: a1e90fe2-0fb4-46c3-a98a-ea1fc8bc223b
+	queryGroup: 'Transform File from Personalregister\Helper Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform File' =
+		let
+		    Source = (Parameter1) => let
+		        Source = Excel.Workbook(Parameter1, null, true),
+		        Table1_Table = Source{[Item="Table1",Kind="Table"]}[Data]
+		    in
+		        Table1_Table
+		in
+		    Source
+	lineageTag: f99df3f0-930f-4f79-9f88-750676130646
+	queryGroup: 'Transform File from Personalregister\Helper Queries'
+
+	annotation PBI_ResultType = Function
+
+expression Parameter2 = #"Sample File (2)" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File (2)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 25d9d174-352e-40a0-8baf-67bdda8d9345
+	queryGroup: 'Transform File from Query1\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File (2)' =
+		let
+		    Source = Excel.Workbook(Parameter2, null, true),
+		    Table2_Table = Source{[Item="Table2",Kind="Table"]}[Data]
+		in
+		    Table2_Table
+	lineageTag: d27d441b-1e9f-49dd-9391-4c218483a50c
+	queryGroup: 'Transform File from Query1'
+
+	annotation PBI_ResultType = Table
+
+expression 'Sample File (2)' =
+		let
+		    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+		    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "HR_2023-02-24.xlsx")),
+		    Navigation1 = #"Filtered Rows"{0}[Content]
+		in
+		    Navigation1
+	lineageTag: 6c939e17-4a01-495e-9959-bf0f87a04dec
+	queryGroup: 'Transform File from Query1\Helper Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform File (2)' =
+		let
+		    Source = (Parameter2) => let
+		        Source = Excel.Workbook(Parameter2, null, true),
+		        Table2_Table = Source{[Item="Table2",Kind="Table"]}[Data]
+		    in
+		        Table2_Table
+		in
+		    Source
+	lineageTag: 4e3e005a-998d-4131-afae-d6280ef072e2
+	queryGroup: 'Transform File from Query1\Helper Queries'
+
+	annotation PBI_ResultType = Function
+
+expression Parameter3 = Exempelfil meta [IsParameterQuery=true, BinaryIdentifier=Exempelfil, Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 4ae711e6-2f38-4e62-b2df-562d994b4c3b
+	queryGroup: 'Omvandla fil från Dim_Department\Hjälpfrågor'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformera exempelfil' =
+		let
+		    Källa = Excel.Workbook(Parameter3, null, true),
+		    Avdelning_Sheet = Källa{[Item="Avdelning",Kind="Sheet"]}[Data]
+		in
+		    Avdelning_Sheet
+	lineageTag: d52bd937-5fad-4112-9bf7-e7c168294e03
+	queryGroup: 'Omvandla fil från Dim_Department'
+
+	annotation PBI_ResultType = Table
+
+expression Exempelfil =
+		let
+		    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+		    #"Filtrerade rader" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "Avdelningar.xlsx")),
+		    Navigering1 = #"Filtrerade rader"{0}[Content]
+		in
+		    Navigering1
+	lineageTag: 337df06d-2917-4d2c-a0a0-4142287bf3d3
+	queryGroup: 'Omvandla fil från Dim_Department\Hjälpfrågor'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformera fil' =
+		let
+		    Source = (Parameter3 as binary) => let
+		    Källa = Excel.Workbook(Parameter3, null, true),
+		    Avdelning_Sheet = Källa{[Item="Avdelning",Kind="Sheet"]}[Data]
+		in
+		    Avdelning_Sheet
+		in
+		    Source
+	lineageTag: 994daa11-7b59-4b26-ac88-4a1c0b13ab45
+	queryGroup: 'Omvandla fil från Dim_Department\Hjälpfrågor'
+
+	annotation PBI_ResultType = Function
+

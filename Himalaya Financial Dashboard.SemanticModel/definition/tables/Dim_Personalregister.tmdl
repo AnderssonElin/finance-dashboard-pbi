@@ -1,0 +1,253 @@
+table Dim_Personalregister
+	lineageTag: 3b799bd8-fe14-4d0e-9aec-728b2694ea6b
+
+	column AnstID
+		dataType: int64
+		formatString: 0
+		lineageTag: 8c8352df-9719-45b1-8b32-2f515fb5ff24
+		summarizeBy: sum
+		sourceColumn: AnstID
+
+		annotation SummarizationSetBy = User
+
+	column 'Fast lön'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2fb9f0ba-cd7c-4582-8fcc-0fa928d5122c
+		summarizeBy: sum
+		sourceColumn: Fast lön
+
+		annotation SummarizationSetBy = User
+
+	column Övertidsersättning/h
+		dataType: double
+		lineageTag: ad171db0-328a-446b-95f4-75e26b7da8ff
+		summarizeBy: sum
+		sourceColumn: Övertidsersättning/h
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Födelsedatum
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 11f42eb2-3eb1-411f-b64b-38a9abe96129
+		summarizeBy: none
+		sourceColumn: Födelsedatum
+
+		variation Variation
+			isDefault
+			relationship: 6ce8c184-6a1d-4171-b47f-f1c9ed3a5c6c
+			defaultHierarchy: LocalDateTable_cf43694c-4a37-4f53-8172-17da52e17bf2.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Anställningstyp
+		dataType: string
+		lineageTag: 2627cae8-9e73-404e-8b29-2b2a23743200
+		summarizeBy: none
+		sourceColumn: Anställningstyp
+
+		annotation SummarizationSetBy = Automatic
+
+	column Normalarbetstid
+		dataType: int64
+		formatString: 0
+		lineageTag: 38b39616-92cf-4cca-b95e-1bfef8511755
+		summarizeBy: sum
+		sourceColumn: Normalarbetstid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Befattning
+		dataType: string
+		lineageTag: 4ea2a9e2-3efa-4395-ba08-af52477ae723
+		summarizeBy: none
+		sourceColumn: Befattning
+
+		annotation SummarizationSetBy = Automatic
+
+	column Anställningsdag
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a125ef88-27b4-4507-b17b-8a35e730cd78
+		summarizeBy: none
+		sourceColumn: Anställningsdag
+
+		variation Variation
+			isDefault
+			relationship: e8599145-b17c-4c9a-bd54-6cab98eea84a
+			defaultHierarchy: LocalDateTable_b9a0f919-e8b0-4cb0-85ae-720558d35141.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Slutdatum
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5f78b204-09a5-4034-a631-aafb4a9bfd22
+		summarizeBy: none
+		sourceColumn: Slutdatum
+
+		variation Variation
+			isDefault
+			relationship: 4fb02889-86cb-4ef1-a32d-51069b563d3d
+			defaultHierarchy: LocalDateTable_6fd08304-ccd4-40e7-946b-ea05ab1498ad.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Arbetsgivaravgift på fast lön'
+		dataType: double
+		lineageTag: 819bea9c-5408-47c3-b857-d175060b7e80
+		summarizeBy: sum
+		sourceColumn: Arbetsgivaravgift på fast lön
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Arbetsgivaravgift (%)'
+		dataType: double
+		lineageTag: b7c37ad3-c432-4efb-821f-3e7e682e1c14
+		summarizeBy: sum
+		sourceColumn: Arbetsgivaravgift (%)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Pension (%)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5abfd1d2-81e4-4993-adf2-2e2824e447bc
+		summarizeBy: sum
+		sourceColumn: Pension (%)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Semestererättning timanställda (%)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 27f8fceb-81f6-4f07-8473-91d523322119
+		summarizeBy: sum
+		sourceColumn: Semestererättning timanställda (%)
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semestererdagar
+		dataType: int64
+		formatString: 0
+		lineageTag: 377ca3a2-a5ba-4d50-a79b-e210e9daf526
+		summarizeBy: sum
+		sourceColumn: Semestererdagar
+
+		annotation SummarizationSetBy = Automatic
+
+	column Namn
+		dataType: string
+		lineageTag: 9d0be931-0b82-416f-ac57-7792f154bb23
+		summarizeBy: none
+		sourceColumn: Namn
+
+		annotation SummarizationSetBy = User
+
+	column Ålder
+		dataType: int64
+		formatString: 0
+		lineageTag: df4e0d7f-bdbc-4ead-ad4e-8620596ceec8
+		summarizeBy: none
+		sourceColumn: Ålder
+
+		annotation SummarizationSetBy = User
+
+	column Kön
+		dataType: string
+		lineageTag: 5328cf7b-2d23-4256-8094-5f19381acdda
+		summarizeBy: none
+		sourceColumn: Kön
+
+		annotation SummarizationSetBy = Automatic
+
+	column Timlön
+		dataType: int64
+		formatString: 0
+		lineageTag: e68efa65-6eab-40b3-b301-4239a3399f83
+		summarizeBy: sum
+		sourceColumn: Timlön
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Arbetade År'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7151899f-ac6d-49eb-985b-467b038bf591
+		summarizeBy: none
+		sourceColumn: Arbetade År
+
+		annotation SummarizationSetBy = User
+
+	column BeräkadTimlönSamtliga
+		dataType: decimal
+		formatString: #,0.00\ "kr";-#,0.00\ "kr";#,0.00\ "kr"
+		lineageTag: 2c47217c-7793-4939-85c9-1da1a279b01f
+		summarizeBy: none
+		sourceColumn: BeräkadTimlönSamtliga
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	partition Dim_Personalregister = m
+		mode: import
+		source = ```
+				let
+				    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+				    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "HR_2023-02-24.xlsx")),
+				    #"Filtered Hidden Files1" = Table.SelectRows(#"Filtered Rows", each [Attributes]?[Hidden]? <> true),
+				    #"Invoke Custom Function1" = Table.AddColumn(#"Filtered Hidden Files1", "Transform File", each #"Transform File"([Content])),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Invoke Custom Function1", {"Name", "Source.Name"}),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Renamed Columns2",{"Transform File"}),
+				    #"Expanded Table Column1" = Table.ExpandTableColumn(#"Removed Other Columns1", "Transform File", Table.ColumnNames(#"Transform File"(#"Sample File"))),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Table Column1",{{"IDAnst", Int64.Type}, {"Förnamn", type text}, {"Efternamn", type text}, {"Kön", type text}, {"Fast lön", Int64.Type}, {"Timlön", type text}, {"Övertidsersättning/h", type number}, {"Födelsedatum", type date}, {"Anställningstyp", type text}, {"Normalarbetstid", Int64.Type}, {"Befattning", type text}, {"Arbetsgivaravgift på fast lön", type number}, {"Arbetsgivaravgift (%)", type number}, {"Pension (%)", Int64.Type}, {"Semestererättning timanställda (%)", Int64.Type}, {"Semestererdagar", Int64.Type}}),
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Changed Type", {{"Anställningsdag", type date}}, "sv-SE"),
+				    #"Changed Type with Locale1" = Table.TransformColumnTypes(#"Changed Type with Locale", {{"Slutdatum", type date}}, "sv-SE"),
+				    #"Merged Columns" = Table.CombineColumns(#"Changed Type with Locale1",{"Förnamn", "Efternamn"},Combiner.CombineTextByDelimiter(" ", QuoteStyle.None),"Namn"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Merged Columns",{{"IDAnst", "AnstID"}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns",null,#date(2024, 1, 1),Replacer.ReplaceValue,{"Slutdatum"}),
+				    #"Added Ålder" = Table.AddColumn(#"Replaced Value", "Ålder", each Number.RoundDown(
+				Duration.Days(
+				    Date.From(
+				        DateTime.LocalNow())-[Födelsedatum])
+				        /365.25, 0)),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Ålder",{{"Ålder", Int64.Type}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type1",{"AnstID", "Namn", "Kön", "Fast lön", "Timlön", "Övertidsersättning/h", "Födelsedatum", "Anställningstyp", "Normalarbetstid", "Befattning", "Anställningsdag", "Slutdatum", "Arbetsgivaravgift på fast lön", "Arbetsgivaravgift (%)", "Pension (%)", "Semestererättning timanställda (%)", "Semestererdagar"}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Reordered Columns", "KönText", each if [Kön] = "K" then "Kvinna" else if [Kön] = "M" then "Man" else if [Kön] = "H" then "Hen" else [Kön]),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Added Conditional Column",{"Kön"}),
+				    #"Inserted Text Before Delimiter" = Table.AddColumn(#"Removed Columns1", "Text Before Delimiter", each Text.BeforeDelimiter([Timlön], "k"), type text),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Inserted Text Before Delimiter",{{"Text Before Delimiter", Int64.Type}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type2",{"Timlön"}),
+				    #"Renamed Timlön" = Table.RenameColumns(#"Removed Columns",{{"Text Before Delimiter", "Timlön"},{"KönText", "Kön"}}),
+				    #"Added Arbetade År" = Table.AddColumn(#"Renamed Timlön", "Arbetade År", each Number.Round(Duration.Days([Slutdatum]-[Anställningsdag])/365.25,0)),
+				    #"Changed Arbetade År" = Table.TransformColumnTypes(#"Added Arbetade År",{{"Arbetade År", Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Changed Arbetade År", "BeräkadTimlönSamtliga", each if [Anställningstyp] = "Heltid" 
+				then ([Fast lön] / [Normalarbetstid]/4)
+				
+				else if [Anställningstyp] = "Deltid" then ([Fast lön] / [Normalarbetstid]/4)
+				else [Timlön]
+				),
+				    #"Changed Type with Locale2" = Table.TransformColumnTypes(#"Added Custom", {{"BeräkadTimlönSamtliga", Currency.Type}}, "sv-SE"),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Changed Type with Locale2",#date(2024, 1, 1),#date(2023, 12, 31),Replacer.ReplaceValue,{"Slutdatum"})
+				in
+				    #"Replaced Value1"
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

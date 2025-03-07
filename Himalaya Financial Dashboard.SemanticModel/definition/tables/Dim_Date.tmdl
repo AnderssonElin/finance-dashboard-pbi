@@ -1,0 +1,151 @@
+table Dim_Date
+	lineageTag: 6bfe8de4-2b89-4c45-b708-10ea3eac7f86
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cf893a96-e83a-4382-b6fc-eb2d6602a941
+		summarizeBy: count
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 40410bcd-876c-4648-ba28-99a81446666d
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 2699356b-f8ad-4bd4-a31c-1b3a236ff1ae
+			defaultHierarchy: LocalDateTable_b2786ffb-4689-4ffc-95ed-bc96afd400d4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Day
+		dataType: int64
+		formatString: 0
+		lineageTag: 82009280-6031-448a-8ece-87a6a205f6bb
+		summarizeBy: sum
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekDayName
+		dataType: string
+		lineageTag: 7c50dc97-955b-43d5-b252-f24d04760272
+		summarizeBy: none
+		sourceColumn: WeekDayName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 46b5fdd8-0a58-49d2-9a03-fb9118e9f8ca
+		summarizeBy: sum
+		sourceColumn: DayOfYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column ISOWeekOfYear
+		dataType: int64
+		formatString: 0
+		lineageTag: c92c9dce-e6f5-4cf4-8d1e-f65fa6ba9786
+		summarizeBy: sum
+		sourceColumn: ISOWeekOfYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: e63cfd4b-5329-43c6-9109-8b9e4898e113
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		lineageTag: 3c628911-d08b-47f0-b8d7-4eb1a1d83f19
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: f9fb5c58-bb36-4a68-91e4-726ad55991dd
+		summarizeBy: sum
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: b1dcd4c6-34e8-4a9e-a105-2568c31f28da
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekDayNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: d44bb3ad-cea7-4df7-ba62-eaf3ab759a41
+		summarizeBy: sum
+		sourceColumn: WeekDayNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column SWEWeekDayName
+		dataType: string
+		lineageTag: 77adff04-2121-42fa-a767-3fffbe0d587c
+		summarizeBy: none
+		sourceColumn: SWEWeekDayName
+
+		annotation SummarizationSetBy = Automatic
+
+	column SWEMonthName
+		dataType: string
+		lineageTag: afc47727-07ad-4e02-a2f8-a648b1556bda
+		summarizeBy: none
+		sourceColumn: SWEMonthName
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShortDate
+		dataType: string
+		lineageTag: 0f660ae4-512b-45eb-b841-c03cb6337b83
+		summarizeBy: none
+		sourceColumn: ShortDate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    dbo_Dim_Date = Source{[Schema="dbo",Item="Dim_Date"]}[Data],
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(dbo_Dim_Date, {{"Date", type date, Day.Monday}}, "sv-SE")
+				in
+				    #"Changed Type with Locale"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,63 @@
+table Dim_Product
+	lineageTag: 8bdace9f-5235-4475-83bc-d51b59b2906c
+
+	column 'Produkt ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4c4b35d2-25bc-433a-a0e7-1e43dfa8aa35
+		summarizeBy: none
+		sourceColumn: Produkt ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Produkt VGR'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 88cbd79d-8c5a-4982-a4c3-c3a637b47ca1
+		summarizeBy: none
+		sourceColumn: Produkt VGR
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Produkt EAN/PLU'
+		dataType: int64
+		formatString: 0
+		lineageTag: bccde46e-dec5-4197-a251-529cc0a93765
+		summarizeBy: none
+		sourceColumn: Produkt EAN/PLU
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Produkt Namn'
+		dataType: string
+		lineageTag: ee291bbc-8740-40b8-bf7f-d7f0667d9dde
+		summarizeBy: none
+		sourceColumn: Produkt Namn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Product = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("utbildning.database.windows.net", "Xlent_Himalaya_DW"),
+				    dbo_Dim_Product = Source{[Schema="dbo",Item="Dim_Product"]}[Data],
+				    #"Split Column by Delimiter" = Table.SplitColumn(dbo_Dim_Product, "Product_Produkt", Splitter.SplitTextByEachDelimiter({"-"}, QuoteStyle.Csv, false), {"Product_Produkt.1", "Product_Produkt.2"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Product_Produkt.1", Int64.Type}, {"Product_Produkt.2", type text}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Product_Produkt.1", "Product_EAN/PLU"}, {"Product_Produkt.2", "Product_ProduktName"}}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns",{{"Product_VGR", Int64.Type}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type1",{"Product_AssortmentKode", "Product_Uppload"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Product_ProduktName", "Produkt Namn"}, {"Product_ID", "Produkt ID"}, {"Product_VGR", "Produkt VGR"}, {"Product_EAN/PLU", "Produkt EAN/PLU"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

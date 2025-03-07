@@ -1,0 +1,50 @@
+table 'Periodic Sales Measure '
+	lineageTag: bf51fedc-a09d-49bd-b7d8-0a89c69d7334
+
+	column 'Periodic Sales Measure'
+		lineageTag: b0f7efc8-f2b9-4581-b9ef-c4ae14909fef
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Periodic Sales Measure  Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Periodic Sales Measure  Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Periodic Sales Measure  Fields'
+		isHidden
+		lineageTag: d35dbe01-a82d-4eb4-9130-5912332a2e52
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Periodic Sales Measure  Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Periodic Sales Measure  Order'
+		isHidden
+		formatString: 0
+		lineageTag: 7e6ee4df-6bd6-45cb-9d2c-044c2f8d8bc4
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Periodic Sales Measure ' = calculated
+		mode: import
+		source =
+				{
+				    ("WTD", NAMEOF('Measure'[WTD Sales]), 0),
+				    ("YTD", NAMEOF('Measure'[YTD Sales]), 3),
+				    ("MTD", NAMEOF('Measure'[MTD Sales]), 1),
+				    ("QTD", NAMEOF('Measure'[QTD Sales]), 2)
+				}
+
+	annotation PBI_Id = e6aa47c2c7084939be9c1a593d6ee36a
+

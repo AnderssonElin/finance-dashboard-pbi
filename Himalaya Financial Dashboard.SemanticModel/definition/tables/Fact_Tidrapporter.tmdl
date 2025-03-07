@@ -1,0 +1,241 @@
+table Fact_Tidrapporter
+	lineageTag: 69624a9a-ea77-440d-87f7-ee50c859c52e
+
+	column 'Source.Name'
+		dataType: string
+		isHidden
+		lineageTag: e788e679-ca2b-43a3-b99a-2cc6f403b6bc
+		summarizeBy: none
+		sourceColumn: Source.Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnstID
+		dataType: int64
+		formatString: 0
+		lineageTag: f3d596af-2f6a-4cef-ac44-7806d995d71b
+		summarizeBy: none
+		sourceColumn: AnstID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SweMånad
+		dataType: string
+		lineageTag: dcd6113e-1e94-43b3-95f4-7d2830514db6
+		summarizeBy: none
+		sourceColumn: SweMånad
+		sortByColumn: MånadsNummer
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Timmar
+		dataType: int64
+		formatString: 0
+		lineageTag: a6f34718-d29e-41bf-a2c0-3ac91f4516a6
+		summarizeBy: sum
+		sourceColumn: Timmar
+
+		annotation SummarizationSetBy = Automatic
+
+	column År
+		dataType: int64
+		formatString: 0
+		lineageTag: 90591def-f09c-4910-890b-1b2aff12c0ce
+		summarizeBy: sum
+		sourceColumn: År
+
+		annotation SummarizationSetBy = Automatic
+
+	column Arbetstid/Semester
+		dataType: string
+		lineageTag: 485cb89f-9db9-4d46-9805-c672081d5b42
+		summarizeBy: none
+		sourceColumn: Arbetstid/Semester
+
+		annotation SummarizationSetBy = Automatic
+
+	column EngSweMånad
+		dataType: string
+		isHidden
+		lineageTag: 6425953c-0744-4f16-ac36-6fb25435c29d
+		summarizeBy: none
+		sourceColumn: EngSweMånad
+		sortByColumn: MånadsNummer
+
+		changedProperty = SortByColumn
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column MånadsNummer
+		dataType: int64
+		formatString: 0
+		lineageTag: 0aa80027-b4af-4365-9bb0-9ed1407e2ef6
+		summarizeBy: sum
+		sourceColumn: MånadsNummer
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Personalregister.Fast lön'
+		dataType: int64
+		formatString: 0
+		lineageTag: ecba6845-5e5e-4de8-b436-fcddcb2219ac
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Fast lön
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Personalregister.Övertidsersättning/h'
+		dataType: double
+		lineageTag: fd2dd44c-bed8-4709-8f75-80fcf0b1f669
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Övertidsersättning/h
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Dim_Personalregister.Normalarbetstid'
+		dataType: int64
+		formatString: 0
+		lineageTag: d5d28317-d2e3-4538-8c36-91612dbcae12
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Normalarbetstid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Personalregister.Arbetsgivaravgift på fast lön'
+		dataType: double
+		lineageTag: b8587bf6-9916-4680-8fb5-be42a81b5c5a
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Arbetsgivaravgift på fast lön
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Dim_Personalregister.Arbetsgivaravgift (%)'
+		dataType: double
+		lineageTag: c25440f9-ecd7-44eb-b4db-b810a3a5cd97
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Arbetsgivaravgift (%)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Dim_Personalregister.Pension (%)'
+		dataType: int64
+		formatString: 0
+		lineageTag: e02661c5-b384-4019-ac66-5f4275aac3db
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Pension (%)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Personalregister.Semestererättning timanställda (%)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ce60eb2-c398-4739-8123-ac19665926a6
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Semestererättning timanställda (%)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Personalregister.Timlön'
+		dataType: int64
+		formatString: 0
+		lineageTag: bacb79b8-204b-4fbb-9923-a0b763cb8275
+		summarizeBy: sum
+		sourceColumn: Dim_Personalregister.Timlön
+
+		annotation SummarizationSetBy = Automatic
+
+	column Månadslön
+		dataType: double
+		formatString: #,0.00\ "kr";-#,0.00\ "kr";#,0.00\ "kr"
+		lineageTag: 0c203d6a-ef5e-49c4-86cc-3e5aa74804ed
+		summarizeBy: sum
+		sourceColumn: Månadslön
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"sv-SE"}
+
+	column 'Månadslön utan övertid'
+		dataType: double
+		lineageTag: b0afc65b-56a9-4f80-bfa4-e6233451a12a
+		summarizeBy: sum
+		sourceColumn: Månadslön utan övertid
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5cbb700c-ce34-435e-ae30-4d3e3d99c149
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Fact_Tidrapporter = m
+		mode: import
+		source = ```
+				let
+				    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+				    #"Filtered Rows" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "HR_2023-02-24.xlsx")),
+				    #"Filtered Hidden Files1" = Table.SelectRows(#"Filtered Rows", each [Attributes]?[Hidden]? <> true),
+				    #"Invoke Custom Function1" = Table.AddColumn(#"Filtered Hidden Files1", "Transform File (2)", each #"Transform File (2)"([Content])),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Invoke Custom Function1", {"Name", "Source.Name"}),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Renamed Columns1", {"Source.Name", "Transform File (2)"}),
+				    #"Expanded Table Column1" = Table.ExpandTableColumn(#"Removed Other Columns1", "Transform File (2)", Table.ColumnNames(#"Transform File (2)"(#"Sample File (2)"))),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Table Column1",{{"Source.Name", type text}, {"AnstID", Int64.Type}, {"Månad", type text}, {"Timmar", Int64.Type}, {"År", Int64.Type}, {"Action", type text}}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type",{{"Action", "Arbetstid/Semester"},{"Månad", "SweMånad"}}),
+				    #"Added Conditional EngMonth" = Table.AddColumn(#"Renamed Columns2", "EngSweMånad", each if [SweMånad] = "Januari" then "January" else if [SweMånad] = "Februari" then "February" else if [SweMånad] = "Mars" then "March" else if [SweMånad] = "Maj" then "May" else if [SweMånad] = "Juni" then "June" else if [SweMånad] = "Juli" then "July" else if [SweMånad] = "Augusti" then "August" else if [SweMånad] = "Oktober" then "October" else [SweMånad]),
+				    #"Added Conditional Column" = Table.AddColumn(#"Added Conditional EngMonth", "Custom", each if [EngSweMånad] = "January" then 1 else if [EngSweMånad] = "February" then 2 else if [EngSweMånad] = "March" then 3 else if [EngSweMånad] = "April" then 4 else if [EngSweMånad] = "May" then 5 else if [EngSweMånad] = "June" then 6 else if [EngSweMånad] = "July" then 7 else if [EngSweMånad] = "August" then 8 else if [EngSweMånad] = "September" then 9 else if [EngSweMånad] = "October" then 10 else if [EngSweMånad] = "November" then 11 else if [EngSweMånad] = "December" then 12 else 0),
+				    #"Renamed Columns" = Table.RenameColumns(#"Added Conditional Column",{{"Custom", "MånadsNummer"}}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns",{{"MånadsNummer", Int64.Type}, {"EngSweMånad", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"AnstID"}, Dim_Personalregister, {"AnstID"}, "Dim_Personalregister", JoinKind.LeftOuter),
+				    #"Expanded Dim_Personalregister" = Table.ExpandTableColumn(#"Merged Queries", "Dim_Personalregister", {"Fast lön", "Övertidsersättning/h", "Normalarbetstid", "Arbetsgivaravgift på fast lön", "Arbetsgivaravgift (%)", "Pension (%)", "Semestererättning timanställda (%)", "Timlön"}, {"Dim_Personalregister.Fast lön", "Dim_Personalregister.Övertidsersättning/h", "Dim_Personalregister.Normalarbetstid", "Dim_Personalregister.Arbetsgivaravgift på fast lön", "Dim_Personalregister.Arbetsgivaravgift (%)", "Dim_Personalregister.Pension (%)", "Dim_Personalregister.Semestererättning timanställda (%)", "Dim_Personalregister.Timlön"}),
+				    #"Added Custom" = Table.AddColumn(#"Expanded Dim_Personalregister", "Månadslön", each if [Timmar] > [Dim_Personalregister.Normalarbetstid] *4 and [Dim_Personalregister.Timlön] = null
+				
+				then 
+				([Timmar]-[Dim_Personalregister.Normalarbetstid] *4
+				) * [#"Dim_Personalregister.Övertidsersättning/h"] + [Dim_Personalregister.Fast lön]
+				
+				else if 
+				[Dim_Personalregister.Timlön] = null
+				then [Dim_Personalregister.Fast lön]
+				
+				else 
+				[Timmar] * [Dim_Personalregister.Timlön]),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom",{{"Månadslön", type number}}),
+				    #"Added Custom1" = Table.AddColumn(#"Changed Type2", "Custom", each if 
+				[Dim_Personalregister.Timlön] = null
+				then [Dim_Personalregister.Fast lön]
+				
+				else 
+				[Timmar] * [Dim_Personalregister.Timlön]),
+				    #"Renamed Columns3" = Table.RenameColumns(#"Added Custom1",{{"Custom", "Månadslön utan övertid"}}),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Renamed Columns3",{{"Månadslön utan övertid", type number}}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Changed Type3", "SweMånad", "SweMånad - Copy"),
+				    #"Duplicated Column1" = Table.DuplicateColumn(#"Duplicated Column", "År", "År - Copy"),
+				    #"Merged Columns" = Table.CombineColumns(Table.TransformColumnTypes(#"Duplicated Column1", {{"År - Copy", type text}}, "en-US"),{"SweMånad - Copy", "År - Copy"},Combiner.CombineTextByDelimiter("-", QuoteStyle.None),"Merged"),
+				    #"Renamed Columns4" = Table.RenameColumns(#"Merged Columns",{{"Merged", "Date"}}),
+				    #"Changed Type with Locale" = Table.TransformColumnTypes(#"Renamed Columns4", {{"Date", type date}}, "sv-SE")
+				in
+				    #"Changed Type with Locale"
+				```
+
+	annotation PBI_ResultType = Table
+

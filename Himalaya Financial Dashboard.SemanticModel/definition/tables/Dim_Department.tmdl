@@ -1,0 +1,62 @@
+table Dim_Department
+	lineageTag: 91d34cf7-3a95-4ea5-ba08-78525f0f2bb9
+
+	column VgrID
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c59204f-525a-45bc-87ef-2f4a6cbbd3ec
+		summarizeBy: none
+		sourceColumn: VgrID
+
+		annotation SummarizationSetBy = Automatic
+
+	column VgrName
+		dataType: string
+		lineageTag: 2b999f36-94c4-4bd2-bb50-afcf8aae45d7
+		summarizeBy: none
+		sourceColumn: VgrName
+
+		annotation SummarizationSetBy = Automatic
+
+	column AvdID
+		dataType: int64
+		formatString: 0
+		lineageTag: 57b90221-4854-42a0-85fa-0851d905d84c
+		summarizeBy: none
+		sourceColumn: AvdID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AvdName
+		dataType: string
+		lineageTag: 92852fd8-66eb-4eb8-9e1b-40b336d23cbe
+		summarizeBy: none
+		sourceColumn: AvdName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Department = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://nackademinyh-my.sharepoint.com/personal/elin_andersson3_yh_nackademin_se/", [ApiVersion = 15]),
+				    #"Filtrerade rader" = Table.SelectRows(Source, each ([Extension] = ".xlsx") and ([Name] = "Avdelningar.xlsx")),
+				    #"Filtrerade dolda filer1" = Table.SelectRows(#"Filtrerade rader", each [Attributes]?[Hidden]? <> true),
+				    #"Anropa anpassad funktion1" = Table.AddColumn(#"Filtrerade dolda filer1", "Transformera fil", each #"Transformera fil"([Content])),
+				    #"Omdöpta kolumner1" = Table.RenameColumns(#"Anropa anpassad funktion1", {"Name", "Source.Name"}),
+				    #"Borttagna övriga kolumner1" = Table.SelectColumns(#"Omdöpta kolumner1", {"Source.Name", "Transformera fil"}),
+				    #"Utvidgad tabellkolumn1" = Table.ExpandTableColumn(#"Borttagna övriga kolumner1", "Transformera fil", Table.ColumnNames(#"Transformera fil"(Exempelfil))),
+				    #"Upphöjda rubriker" = Table.PromoteHeaders(#"Utvidgad tabellkolumn1", [PromoteAllScalars=true]),
+				    #"Borttagna kolumner" = Table.RemoveColumns(#"Upphöjda rubriker",{"Avdelningar.xlsx"}),
+				    #"Split Column by Delimiter" = Table.SplitColumn(#"Borttagna kolumner", "VGR", Splitter.SplitTextByEachDelimiter({"-"}, QuoteStyle.Csv, false), {"VGR.1", "VGR.2"}),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"VGR.1", Int64.Type}, {"VGR.2", type text}}),
+				    #"Split Column by Delimiter1" = Table.SplitColumn(#"Changed Type2", "AVD", Splitter.SplitTextByEachDelimiter({"-"}, QuoteStyle.Csv, false), {"AVD.1", "AVD.2"}),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Split Column by Delimiter1",{{"AVD.1", Int64.Type}, {"AVD.2", type text}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type3",{{"VGR.1", "VgrID"}, {"VGR.2", "VgrName"}, {"AVD.1", "AvdID"}, {"AVD.2", "AvdName"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

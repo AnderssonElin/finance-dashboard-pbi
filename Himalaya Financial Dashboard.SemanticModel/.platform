@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Himalaya Financial Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fd440c84-9cc7-484a-ad4f-fe9635209332"
+  }
+}
