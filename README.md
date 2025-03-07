@@ -2,14 +2,9 @@
 
 A Power BI project that integrates sales, financial, HR, and campaign data to provide comprehensive business analytics. The model connects dimension tables (Date, Product, Department, Personnel, Campaign) with fact tables (Sales, Time reports, Financial data) to enable multi-dimensional analysis of business performance across different time periods, departments, and products.
 
-## Project Overview
-
-Himalaya Financial Dashboard is a comprehensive analytics tool that provides insights into the company's financial performance, sales trends, personnel efficiency, and campaign effectiveness. The dashboard is designed to help decision-makers:
-
-- Monitor financial key metrics and costs
-- Analyze sales trends over time and by product
-- Evaluate personnel efficiency and resource utilization
-- Measure the effectiveness of marketing campaigns
+<img width="1439" alt="Image" src="https://github.com/user-attachments/assets/c978aed1-1cc5-4e9d-9f71-7b1b8d477517" />
+<img width="1440" alt="Image" src="https://github.com/user-attachments/assets/76797a33-e8c5-462c-9a7d-522ea98ccf12" />
+<img width="1453" alt="Image" src="https://github.com/user-attachments/assets/f00573fb-f70c-4dfc-b230-eccac5fbe018" />
 
 ## Data Model
 
