@@ -1,0 +1,2 @@
+# finance-dashboard-pbi
+ A Power BI project that integrates sales, financial, HR, and campaign data to provide comprehensive business analytics. The model connects dimension tables (Date, Product, Department, Personnel, Campaign) with fact tables (Sales, Time reports, Financial data) to enable multi-dimensional analysis of business performance across different time periods, departments, and products.
