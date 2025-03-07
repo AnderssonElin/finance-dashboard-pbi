@@ -126,27 +126,12 @@ The data sources are configured with parameters to easily switch between differe
 
 ### Parameter Configuration
 
-To ensure correct data loading, you need to update the following parameters in Power BI Desktop:
-1. Open the .pbip file in Power BI Desktop
-2. Go to "Transform data" > "Data source settings" > "Parameters"
-3. Update the following parameter values:
-   - **server**: Set to your SQL Server address (default: utbildning.database.windows.net)
-   - **financeUrl**: Set to the path of your Finance.xlsx file
-   - **campaignUrl**: Set to the path of your Campaign.xlsx file
-   - **urlSharepoint**: Set to your SharePoint URL if using SharePoint for data storage
+To ensure correct data loading, you need to update the following parameters in Himalaya Financial Dashboard.SemanticModel/definition/expressions.tmdl:
+
+Update the following parameter values:
+- **server**: Set to your SQL Server address (default: utbildning.database.windows.net)
+- **financeUrl**: Set to the path of your Finance.xlsx file
+- **campaignUrl**: Set to the path of your Campaign.xlsx file
+- **urlSharepoint**: Set to your SharePoint URL if using SharePoint for data storage
 
 These parameters are used throughout the data model to connect to the correct data sources.
-
-## Usage
-
-To use this dashboard:
-1. Open the .pbip file in Power BI Desktop
-2. Update data sources if necessary
-3. Explore the different report pages to gain insights into the business
-
-## Maintenance and Updates
-
-The dashboard is designed to be updated regularly with new data. Data sources can be updated by:
-1. Opening Power BI Desktop
-2. Going to "Home" > "Refresh"
-3. Alternatively, configure scheduled refreshes if the dashboard is published to Power BI Service
